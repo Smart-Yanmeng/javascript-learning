@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Multi-Channel</title>
+    <script src="/static/js/d3.min.js"></script>
+    <script src="https://unpkg.com/textures@1.2.0/dist/textures.js"></script>
+    <link rel="stylesheet" href="/static/css/multi-channel.css"> 
+  </head>
+  <body>
+    <svg width="1650" height="3920" id="mainsvg" class="svgs"></svg>
+    <script>
+      const mainsvg = d3.select('.svgs');
+      const svg = d3.select('#mainsvg');
+      const width = +svg.attr('width');
+      const height = +svg.attr('height');
+      const margin = {top: 100, right: 120, bottom: 100, left: 120};
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const strategies = []; 
+      const xValue = datum => datum.name;
+      const yValue = datum => datum; 
+      let xScale, yScale; 
+
+      const textureGenerators = [
+        function(r){
+          return textures.lines().thicker(r);
+        },
+        function(r){
+          return textures.circles().size(r);
+        },
+        function(r){
+          return textures.paths().d("squares").size(r);
+        }
+      ];
+
+      function colorizeTexture(texture, color){
+        var texture = texture.stroke(color);
+          if(texture.fill){
+            texture.fill(color);
+        }
+        return texture;
+      }
+
+      const length_texture = {
+        primitive: 'rect',
+        name: 'length_texture',
+        step: 20, 
+        channel1: 'width',
+        channel1_value: datum => 10 * Math.floor(datum / length_texture.step) + 20,
+        channel2: 'fill',
+        channel2_value: datum => 24 - datum % length_texture.step, // 4 ~ 24
+        channel2_texture_type: 1,
+        channel2_texture_color: '#1b9e77',
+      }; 
+      
+      const render_length_texture = function(data, strategy){
+        var g = d3.select('#maingroup');
+        g.selectAll(`.rect-${strategy.name}`)
+        .data(data)
+        .join(strategy.primitive)
+        .attr('class', `.rect-${strategy.name}`) 
+        .attr('x', datum => xScale(strategy.name) + xScale.bandwidth()/2 - strategy.channel1_value(datum)/2)
+        .attr('y', datum => yScale(datum))
+        .style('stroke', '#1b9e77')
+        .attr(strategy.channel1, strategy.channel1_value)
+        .attr(strategy.channel2, function(d,i) {
+          var tex = colorizeTexture(textureGenerators[length_texture.channel2_texture_type](length_texture.channel2_value(d)), length_texture.channel2_texture_color);
+          g.call(tex);
+          return tex.url();
+        })
+        .attr('height', 50)
+      };
+
+      strategies.push(length_texture);
+
+      const area_angle = {
+        primitive: 'circle',
+        name: 'area_angle',
+        step: 100, 
+        channel1: 'r',
+        channel1_value: datum => 10 * Math.floor(datum / area_angle.step) + 20,
+        channel2: 'fill',
+        channel2_value: datum => datum % area_angle.step
+      }; 
+
+      const render_area_angle = function(data, strategy){
+        var color = ['#7A6D1E', 'white']
+        for (var i=0;i<data.length;++i) {
+          var per = area_angle.channel2_value(data[i]);
+          var g = d3.select('#maingroup');
+          var arc_generator  = d3.arc().innerRadius([0]).outerRadius([area_angle.channel1_value(data[i])]);
+          var pieDate = [
+            {data: per
+            ,endAngle: 2 * Math.PI * (per / area_angle.step)
+            ,index: 0
+            ,padAngle: 0
+            ,startAngle: 0.
+            ,value: per},
+            {data: area_angle.step - per
+            ,endAngle: 2 * Math.PI
+            ,index: 1
+            ,padAngle: 0
+            ,startAngle: 2 * Math.PI * (per / area_angle.step)
+            ,value: area_angle.step - per}
+          ]
+          var gs = g.selectAll(`.pie1-${i}`).data(pieDate).enter().append("g").attr('class', `pie1-${i}`).attr("transform","translate("+ (xScale(strategy.name)) +","+ (yScale(data[i]) + 100) +")");
+          gs.append("path")
+          .attr("stroke", "#E3AF80")
+          .attr("fill", function(d,i) {
+            return color[i];
+          })
+          .attr("d", function (d) {
+            return arc_generator(d);
+          });
+        }
+      }
+
+      strategies.push(area_angle);
+
+      const area_texture = {
+        primitive: 'circle',
+        name: 'area_angle',
+        step: 20, 
+        channel1: 'r',
+        channel1_value: datum => 10 * Math.floor(datum / area_angle.step) + 20,
+        channel2: 'fill',
+        channel2_value: datum => 22 - datum % length_texture.step, // 3~22
+        channel2_texture_type: 1,
+        channel2_texture_color: '#1b9e77',
+      }; 
+
+      const render_area_texture = function(data, strategy){
+        var g = d3.select('#maingroup');
+        g.selectAll(`.rect-${strategy.name}`)
+        .data(data)
+        .join(strategy.primitive)
+        .attr('class', `.rect-${strategy.name}`) 
+        .attr('cx', datum => xScale(strategy.name) + xScale.bandwidth()/2 )
+        .attr('cy', datum => yScale(datum) + strategy.channel1_value(datum) / 2)
+        .style('stroke', 'black')
+        .attr(strategy.channel1, strategy.channel1_value)
+        .attr(strategy.channel2, function(d,i) {
+          var tex = colorizeTexture(textureGenerators[area_texture.channel2_texture_type](area_texture.channel2_value(d)), area_texture.channel2_texture_color);
+          g.call(tex);
+          return tex.url();
+        })
+        .attr('height', 50)
+      }
+
+      strategies.push(area_texture);
+
+      const texture_saturation = {
+        primitive: 'circle',
+        name: 'texture_saturation',
+        step: 53, 
+        channel1_value: datum => 22 - datum / texture_saturation.step, // 3~22
+        channel2: 'fill',
+        channel2_texture_type: 1,
+        channel2_value: datum => d3.interpolateBlues((datum % texture_saturation.step) / texture_saturation.step),
+      }; 
+
+      const render_texture_saturation = function(data, strategy){
+        console.log(xScale(strategy.name) + xScale.bandwidth()/2);
+        var g = d3.select('#maingroup');
+        g.selectAll(`.circle-${strategy.name}`)
+        .data(data)
+        .join(strategy.primitive)
+        .attr('class', `.circle-${strategy.name}`) 
+        .attr('cx', xScale(strategy.name) + xScale.bandwidth()/2)
+        .attr('cy', datum => yScale(datum))
+        .attr('r', 60)
+        .attr('stroke', 'black')
+        .attr(strategy.channel2, function(d,i) {
+          var tex = colorizeTexture(textureGenerators[texture_saturation.channel2_texture_type](texture_saturation.channel1_value(d)), texture_saturation.channel2_value(d));
+          g.call(tex);
+          return tex.url();
+        });
+      }
+
+      strategies.push(texture_saturation);
+
+      const angle_saturation = {
+        primitive: 'circle',
+        name: 'angle_saturation',
+        step: 10, 
+        channel1_value: datum => Math.floor(datum / angle_saturation.step) * 3,
+        channel2: 'fill',
+        channel2_value: datum => d3.interpolateBlues((datum % angle_saturation.step) / angle_saturation.step)
+      }; 
+
+      const render_angle_saturation = function(data, strategy){
+        for (var i=0;i<data.length;++i) {
+          var color = [angle_saturation.channel2_value(data[i]), 'white']
+          var per = angle_saturation.channel1_value(data[i]);
+          var g = d3.select('#maingroup');
+          var arc_generator  = d3.arc().innerRadius([0]).outerRadius([60]);
+          var pieDate = [
+            {data: per
+            ,endAngle: 2 * Math.PI * per / 360
+            ,index: 0
+            ,padAngle: 0
+            ,startAngle: 0.
+            ,value: per},
+            {data: angle_saturation.step - per
+            ,endAngle: 2 * Math.PI
+            ,index: 1
+            ,padAngle: 0
+            ,startAngle: 2 * Math.PI * per / 360
+            ,value: angle_saturation.step - per}
+          ]
+          var gs = g.selectAll(`.pie2-${i}`).data(pieDate).enter().append("g").attr('class', `pie2-${i}`).attr("transform","translate("+ (xScale(strategy.name)) +","+ (yScale(data[i]) + 100) +")");
+          gs.append("path")
+          .attr("stroke", "black")
+          .attr("fill", function(d,i) {
+            return color[i];
+          })
+          .attr("d", function (d) {
+            return arc_generator(d);
+          });
+        }
+      }
+
+      strategies.push(angle_saturation);
+
+      const renderinit = function(data){
+        const g = svg.append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .attr('id', 'maingroup');
+
+        xScale = d3.scaleBand()
+        .domain(strategies.map(xValue))
+        .range([0, innerWidth])
+
+        yScale = d3.scaleBand()
+        .domain(data.map(yValue))
+        .range([0, innerHeight])
+
+        // Adding axes; 
+        const yAxis = d3.axisLeft(yScale)
+        .tickSize(-innerWidth)
+        //.tickFormat(d3.format('.2s'))
+        .tickPadding(10); // .tickPadding is used to prevend intersection of ticks; 
+        const xAxis = d3.axisTop(xScale)
+        //.tickFormat(d3.format('.2s'))
+        .tickSize(-innerHeight)
+        .tickPadding(10);
+
+        let yAxisGroup = g.append('g').call(yAxis)
+        .attr('id', 'yaxis');
+        yAxisGroup.append('text')
+        .attr('transform', `rotate(-90)`)
+        .attr('x', -innerHeight / 2)
+        .attr('y', -60)
+        .attr('fill', '#333333')
+        //.text(yAxisLabel)
+        .attr('text-anchor', 'middle') // Make label at the middle of axis. 
+        yAxisGroup.selectAll('.domain').remove(); // we can select multiple tags using comma to seperate them and we can use space to signify nesting; 
+        yAxisGroup.selectAll('.domain, .tick line').remove();
+        let xAxisGroup = g.append('g').call(xAxis)
+        //.attr('transform', `translate(${0}, ${innerHeight})`)
+        .attr('id', 'xaxis');
+        xAxisGroup.append('text')
+        .attr('y', 60)
+        .attr('x', innerWidth / 2)
+        .attr('fill', '#333333')
+        //.text(xAxisLabel);
+        xAxisGroup.selectAll('.domain').remove();
+        xAxisGroup.selectAll('.domain, .tick line').remove();
+      }
+
+      // const testData = [5, 9, 18, 100, 600, 1000, 5000, 6000, 6009, 10020, 10040, 10060, 10080];
+      const testData = [300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 860, 870, 880, 900, 1000];
+      console.log(testData);
+      renderinit(testData);
+      render_length_texture(testData, length_texture);
+      render_area_angle(testData, area_texture);
+      render_area_texture(testData, area_texture);
+      render_texture_saturation(testData, texture_saturation);
+      render_angle_saturation(testData, angle_saturation);
+    </script>
+  </body>
+</html>

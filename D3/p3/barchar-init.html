@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/d3.v7.min.js"></script>
+</head>
+<body>
+<svg width="1600" height="800" id="mainsvg" class="svgs"></svg>
+<script>
+    /* Step 1: Create data */
+    const data = [
+        {name: 'York', value: 6},
+        {name: 'Jean', value: 16},
+        {name: 'Jack', value: 13},
+        {name: 'Alice', value: 5},
+        {name: 'Bob', value: 10},
+        {name: 'Nan', value: 12},
+        {name: 'Erica', value: 20},
+        {name: 'Timi', value: 15},
+        {name: 'Jimmi', value: 18},
+        {name: 'God', value: 18}
+    ];
+
+    /* Step 2: Create a chart */
+    const svg = d3.select('#mainsvg')
+    const width = +svg.attr('width');
+    const height = +svg.attr('height');
+    const margin = {top: 60, right: 30, bottom: 60, left: 150};
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const xScale = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.value)])
+        .range([0, innerWidth]);
+
+    const yScale = d3.scaleBand()
+        .domain(data.map(d => d.name))
+        .range([0, innerHeight])
+        .padding(0.2);
+
+    const g = svg.append('g')
+        .attr('id', 'mainGroup')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
+    g.append('g').call(xAxis).attr('transform', `translate(0, ${innerHeight})`);
+    g.append('g').call(yAxis);
+
+    data.forEach(d => {
+        g.append('rect')
+            .attr('y', yScale(d.name))
+            .attr('width', xScale(d.value))
+            .attr('height', yScale.bandwidth())
+            .attr('fill', 'steelblue')
+            .attr('opacity', '0.7');
+    });
+
+    d3.selectAll('.tick text').attr('font-size', '2em');
+
+    g.append('text').text('Members')
+        .attr('font-size', '3em')
+        .attr('transform', `translate(${innerWidth / 2}, 0)`)
+        .attr('text-anchor', 'middle');
+</script>
+</body>
+</html>

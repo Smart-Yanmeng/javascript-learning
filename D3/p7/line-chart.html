@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/d3.v7.min.js"></script>
+</head>
+<body>
+<svg width="1650" height="920" id="mainSvg" class="svgs" style="background-color: white"></svg>
+<script>
+    const svg = d3.select("#mainSvg");
+    const width = +svg.attr("width");
+    const height = +svg.attr("height");
+    const margin = {top: 100, right: 120, bottom: 100, left: 120};
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    const xValue = (datum) => {
+        return datum['日期']
+    };
+    const yValue = (datum) => {
+        return datum['现有确诊']
+    };
+
+    let xScale, yScale;
+    let allDates;
+    let allKeys;
+
+    const renderInit = function (data) {
+        xScale = d3.scaleTime()
+            .domain(d3.extent(data, xValue))
+            .range([0, innerWidth])
+            .nice();
+
+        yScale = d3.scaleLinear()
+            .domain(d3.extent(data, yValue).reverse())
+            .range([0, innerHeight])
+            .nice();
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`)
+            .attr('id', 'mainGroup');
+
+        const xAxis = d3.axisBottom(xScale)
+            .ticks(Math.floor(allDates.length / 4))
+            // .tickSize(-innerHeight)
+
+        const yAxis = d3.axisLeft(yScale)
+            // .tickSize(-innerWidth)
+
+        const xAxisG = g.append('g')
+            .call(xAxis)
+            .attr('transform', `translate(0, ${innerHeight})`)
+
+        const yAxisG = g.append('g')
+            .call(yAxis)
+
+        g.selectAll('.tick text')
+            .attr('font-size', '2em')
+
+        g.append('path')
+            .attr('id', 'alterPath')
+    }
+
+    const renderUpdateAlter = function (data) {
+        const line = d3.line()
+            .x(d => xScale(xValue(d)))
+            .y(d => yScale(yValue(d)))
+            .curve(d3.curveCardinal.tension(0.5));
+
+        d3.select('#alterPath').datum(data)
+            .attr('stroke', 'green')
+            .attr('stroke-width', 2.5)
+            .attr('fill', 'none')
+            .transition().duration(2000)
+            .attr('d', line)
+    }
+
+    /* Main */
+    d3.csv('./province.csv').then(function (data) {
+        data = data.filter(d => d['省份'] !== '总计').filter(d => d['省份'] !== '湖北');
+        allDates = Array.from(new Set(data.map(d => d['日期'])));
+
+        data.forEach(d => {
+            d['现有确诊'] = +d['现有确诊'];
+            d['日期'] = new Date(d['日期']);
+        })
+
+        /* 按省份隔开 */
+        let provinces = {};
+        allKeys = Array.from(new Set(data.map(d => d['省份'])));
+        allKeys.forEach(key => {
+            provinces[key] = [];
+        })
+        data.forEach(d => {
+            provinces[d['省份']].push(d);
+        })
+        allKeys.forEach(key => {
+            provinces[key].sort((a, b) => a['日期'] - b['日期']);
+        })
+
+        renderInit(data)
+
+        let c = 0;
+        let intervalId = setInterval(() => {
+            if (c >= allKeys.length) {
+                clearInterval(intervalId);
+            } else {
+                let key = allKeys[c];
+                renderUpdateAlter(provinces[key]);
+                c = c + 1;
+            }
+        }, 2000);
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/d3.v7.min.js"></script>
+</head>
+<body style="text-align: center">
+<svg width="1650" height="920" id="mainSvg" class="svgs" style="background-color: white"></svg>
+<script>
+    const svg = d3.select("#mainSvg");
+    const width = +svg.attr("width");
+    const height = +svg.attr("height");
+    const margin = {top: 100, right: 120, bottom: 100, left: 120};
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    let xScale, yScale;
+    const xAxisLabel = "X Axis";
+    const yAxisLabel = "Y Axis";
+
+    let allDates;
+    let sequential;
+
+    let xValue = d => Math.log(d['确诊人数'] + 1);
+    let yValue = d => Math.log(d['新增确诊'] + 1);
+
+    let duration = 1000;
+
+    const color = {
+        "武汉": "#ff1c12",
+        "黄石": "#de5991",
+        "十堰": "#759AA0",
+        "荆州": "#E69D87",
+        "宜昌": "#be3259",
+        "襄阳": "#EA7E53",
+        "鄂州": "#EEDD78",
+        "荆门": "#9359b1",
+        "孝感": "#47c0d4",
+        "黄冈": "#F49F42",
+        "咸宁": "#AA312C",
+        "恩施州": "#B35E45",
+        "随州": "#4B8E6F",
+        "仙桃": "#ff8603",
+        "天门": "#ffde1d",
+        "潜江": "#1e9d95",
+        "神农架": "#7289AB"
+    }
+
+    /* Init */
+    const renderInit = function (data) {
+        xScale = d3.scaleLinear()
+            .domain(d3.extent(data, xValue))
+            .range([0, innerWidth])
+            .nice();
+
+        yScale = d3.scaleLinear()
+            .domain(d3.extent(data, yValue).reverse())
+            .range([0, innerHeight])
+            .nice();
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`)
+            .attr('id', 'mainGroup');
+
+        const xAxis = d3.axisBottom(xScale)
+            .tickSize(-innerHeight)
+            .tickPadding(10);
+
+        const yAxis = d3.axisLeft(yScale)
+            .tickSize(-innerWidth)
+            .tickPadding(10);
+
+        let xAxisGroup = g.append("g")
+            .call(xAxis)
+            .attr("transform", `translate(0,${innerHeight})`)
+            .attr('id', 'xAxisGroup');
+
+        let yAxisGroup = g.append("g")
+            .call(yAxis)
+            .attr('id', 'yAxisGroup');
+
+        xAxisGroup.append("text")
+            .attr('font-size', '3em')
+            .attr('x', innerWidth / 2)
+            .attr('y', 60)
+            .attr('fill', '#333333')
+            .text(xAxisLabel);
+        xAxisGroup.selectAll('.domain').remove();
+
+        yAxisGroup.append("text")
+            .attr('font-size', '3em')
+            .attr("transform", "rotate(-90)")
+            .attr('x', -innerHeight / 2)
+            .attr('y', -60)
+            .attr("fill", "#333333")
+            .text(yAxisLabel)
+            .attr("text-anchor", "middle");
+        yAxisGroup.selectAll('.domain').remove();
+    }
+
+    /* Update */
+    const renderUpdate = function (seq) {
+        const g = d3.select('#mainGroup');
+
+        let circleUpdates = g.selectAll('circle').data(seq, d => d['地区']);
+
+        let circleEnter = circleUpdates.enter().append('circle')
+            .attr('cx', d => xScale(xValue(d)))
+            .attr('cy', d => yScale(yValue(d)))
+            .attr('r', 20)
+            .attr('fill', d => color[d['地区']])
+            .attr('opacity', 0.7);
+
+        circleUpdates.merge(circleEnter)
+            .transition().ease(d3.easeLinear).duration(duration)
+            .attr('cx', d => xScale(xValue(d)))
+            .attr('cy', d => yScale(yValue(d)));
+    }
+
+    /* Main */
+    d3.csv('./hubei_day14.csv').then(data => {
+        data = data.filter(d => d['地区'] !== '总计');
+
+        data.forEach(d => {
+            d['确诊人数'] = +d['确诊人数'];
+            d['新增确诊'] = +d['新增确诊'];
+        });
+
+        allDates = Array.from(new Set(data.map(d => d['日期'])));
+        allDates = allDates.sort((a, b) => new Date(a) - new Date(b));
+
+        /* 按每一天分开 */
+        sequential = [];
+        allDates.forEach(d => {
+            sequential.push([])
+        })
+        data.forEach(d => {
+            sequential[allDates.indexOf(d['日期'])].push(d);
+        })
+
+        renderInit(data);
+
+        let c = 0;
+        let intervalId = setInterval(() => {
+            if (c >= allDates.length) clearInterval(intervalId);
+            renderUpdate(sequential[c]);
+            c++;
+        }, duration);
+
+        d3.selectAll('.tick text').attr('font-size', '2em');
+    });
+</script>
+</body>
+</html>

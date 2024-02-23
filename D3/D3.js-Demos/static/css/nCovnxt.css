@@ -1,0 +1,36 @@
+text{
+    font-size: 2em;
+}
+
+.legend_text{
+    font-size: 1em;
+}
+
+.date_text {
+    font-weight: bold;
+    font-size: 6em;
+}
+
+.province_text {
+    fill: white;
+    font-size: 1em;
+}
+
+.tick text{
+    font-size: 1.6em;
+    fill: #000000;
+}
+
+.tick line {
+    stroke: #C0C0BB;
+}
+
+#population{
+    font-size: 3em;
+    stroke: #8E8883
+}
+
+#horsepower{
+    font-size: 3em;
+    stroke: #8E8883
+}
