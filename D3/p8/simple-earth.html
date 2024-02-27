@@ -25,7 +25,7 @@
     const projection = d3.geoNaturalEarth1();
     const pathGenerator = d3.geoPath().projection(projection);
 
-    d3.json('/countries-100m').then(data => {
+    d3.json('./countries-100m.json').then(data => {
         let world = topojson.feature(data, data.objects.countries);
 
         projection.fitSize([innerWidth, innerHeight], world);
