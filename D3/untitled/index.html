@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>York</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+<svg width="1650" height="800" id="mainSvg"></svg>
+
+<script>
+    let xScale, yScale;
+
+    const svg = d3.select("#mainSvg");
+    const width = +svg.attr("width");
+    const height = +svg.attr("height");
+    const margin = {top: 60, right: 150, bottom: 60, left: 150};
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+
+    let allData = [];
+    let k = 0;
+
+    const renderInit = function (data) {
+        xScale = d3.scaleLinear()
+            .domain([1.6, 10.0])
+            .range([0, innerWidth]);
+
+        yScale = d3.scaleLinear()
+            .domain([0, 180.0])
+            .range([innerHeight, 0]);
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`)
+            .attr('id', 'mainGroup');
+
+        const xAxis = d3.axisBottom(xScale)
+            .tickFormat(d3.format(".1f"))
+            .tickValues(d3.range(2.0, 10.1, 0.5));
+
+        const yAxis = d3.axisLeft(yScale);
+
+        const xAxisG = g.append("g").call(xAxis)
+            .attr("transform", `translate(0,${innerHeight})`);
+
+        const yAxisG = g.append("g").call(yAxis);
+
+        data.forEach((d, i) => {
+            g.append("rect")
+                .attr("x", xScale(1.6 + 0.2 * i) + 2)
+                .attr("y", yScale(d))
+                .attr("width", xScale(1.9) - xScale(1.7) - 4)
+                .attr("height", innerHeight - yScale(d))
+                .attr("fill", "green")
+                .attr("opacity", "0.5")
+            k++;
+        })
+
+        svg.append("text")
+            .attr("x", margin.left + 10)
+            .attr("y", margin.top)
+            .attr("dy", ".35em")
+            .text("Counties");
+
+        svg.append("text")
+            .attr("x", innerWidth + 130)
+            .attr("y", innerHeight + 45)
+            .attr("dy", ".35em")
+            .text("Rates");
+
+        svg.selectAll('text').attr('font-size', '15px');
+    }
+
+    d3.csv("unemployment-x.csv").then(function (data) {
+        data.forEach(function (d) {
+            d.rate = +d.rate;
+        });
+
+        for (let i = 1.7; i < 10.0; i += 0.2) {
+            allData[k] = 0;
+
+            data.forEach(function (d) {
+                if (d.rate >= i && d.rate < i + 0.2) allData[k]++;
+            });
+
+            k++;
+        }
+
+        renderInit(allData);
+    });
+</script>
+</body>
+</html>
