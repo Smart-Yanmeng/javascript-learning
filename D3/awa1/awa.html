@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/d3.v7.min.js"></script>
+</head>
+<body>
+
+<script>
+    d3.csv("").then(function (data) {
+        d3.select("#mySelect1").on("change", function () {
+            let selectedValue = d3.select(this).property("value");
+            let finddata = findData(selectedValue, data);
+            drawBarChart(finddata);
+        });
+    });
+
+    function findData(value, data) {
+        let foundData = data.find(function (d) {
+            return d.key === value;
+        });
+
+        if (foundData) {
+            return foundData.value;
+        } else {
+            return [];
+        }
+    }
+
+    function drawBarChart(data) {
+        let svgWidth = 1000, svgHeight = 630;
+        let margin = {top: 10, right: 10, bottom: 10, left: 10};
+        let width = svgWidth - margin.left - margin.right;
+        let height = svgHeight - margin.top - margin.bottom;
+        d3.select(".tiaoxingtu svg").remove();
+        let svg = d3.select(".tiaoxingtu")
+            .append("svg")
+            .attr("width", svgWidth)
+            .attr("height", svgHeight)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        let x = d3.scaleBand()
+            .range([0, width])
+            .domain(data.map(d => d.Name))
+            .padding(0.1);
+        let y = d3.scaleLinear()
+            .range([height, 0])
+            .domain([0, d3.max(data, d => d.Total)]);
+        svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function (d) {
+                return x(d.Name);
+            })
+            .attr("width", x.bandwidth())
+            .attr("y", function (d) {
+                return y(d.Total);
+            })
+            .attr("height", function (d) {
+                return height - y(d.Total);
+            });
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+        svg.append("g")
+            .call(d3.axisLeft(y));
+    }
+</script>
+
+</body>
+</html>
