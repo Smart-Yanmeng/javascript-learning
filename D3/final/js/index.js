@@ -17,47 +17,59 @@ async function main() {
     const population = await d3.csv("./../data/world_population_data.csv");
     const economic = await d3.csv("./../data/world_economic_data.csv");
 
-    // 筛选数据
-    let newTerr = terrorism.map(d => {
-        delete d["Code"];
-
-        return d
-    })
-    let newUnemp = unemployment.map(d => {
-        delete d["GDP (current US$)_y"];
-        delete d["GDP growth (annual %)_y"];
-    })
-    let newPop = population.map(d => {
-        delete d["rank"];
-        delete d["cca3"];
-        delete d["continent"];
-
-        return d;
-    })
-    let newEco = economic.map(d => {
-        delete d["GDP (current US$)_y"];
-        delete d["GDP growth (annual %)_y"];
-
-        return d;
-    })
-
-    console.log(newTerr)
-    console.log(newUnemp)
-    console.log(newPop)
-    console.log(newEco)
+    // // 筛选数据
+    // let newTerr = terrorism.map(d => {
+    //     delete d["Code"];
+    //
+    //     return d
+    // })
+    // let newUnemp = unemployment.map(d => {
+    //     delete d["GDP (current US$)_y"];
+    //     delete d["GDP growth (annual %)_y"];
+    // })
+    // let newPop = population.map(d => {
+    //     delete d["rank"];
+    //     delete d["cca3"];
+    //     delete d["continent"];
+    //
+    //     return d;
+    // })
+    // let newEco = economic.map(d => {
+    //     delete d["GDP (current US$)_y"];
+    //     delete d["GDP growth (annual %)_y"];
+    //
+    //     return d;
+    // })
+    //
+    // console.log(newTerr)
+    // console.log(newUnemp)
+    // console.log(newPop)
+    // console.log(newEco)
 
     // 创建主要数据 map
-    let worldDataMap = [];
+    let worldDataMap = {};
     countryCode.forEach(d => {
-        worldDataMap[+d.id] = [d.name];
+        worldDataMap[d.id] = {name: d.name};
     });
 
     // 添加 popluation
-    let popData = Array.from(population.map(d => d['1970 population']))
-    // console.log(popData)
-    population.forEach(d => {
+    let popData = [
+        ...[1970, 1980, 1990, 2000, 2010, 2015, 2020, 2022, 2023].map(year =>
+            population.map(d => [d[year + ' population'], d['country'], year])
+        )
+    ];
+    console.log(popData)
+    popData.forEach(d => {
+        d.forEach(j => {
+            for (key in worldDataMap) {
+                if (worldDataMap[key]['name'] === j[1]) {
+                    worldDataMap[key][j[2]] = j[0];
+                }
+            }
+        })
     })
 
+    console.log("myWorld", worldDataMap)
 
     /* ========= */
     /* =- MAP -= */
@@ -84,15 +96,15 @@ async function main() {
         .attr('id', d => +d.id)
         .attr('stroke', 'black')
         .attr('stroke-width', 1)
-        .on('mouseover', function (d) {
+        .on('mouseover', function () {
             d3.select(this)
                 .attr('opacity', 0.5);
         })
-        .on('mouseout', function (d) {
+        .on('mouseout', function () {
             d3.select(this)
                 .attr('opacity', 1);
         })
-        .on('click', function (d) {
+        .on('click', function () {
             console.log(this.id)
             console.log(worldDataMap[+this.id])
         })
@@ -104,12 +116,10 @@ async function main() {
     // /* ========== */
     // console.log(world)
     // console.log(countryCode)
-    console.log(terrorism)
+    // console.log(terrorism)
     // console.log(unemployment)
     // console.log(economic)
     // console.log(population)
-    // console.log(worldDataMap)
-    // console.log(worldDataMap.length)
 }
 
 main().then(r => console.log('done'));
