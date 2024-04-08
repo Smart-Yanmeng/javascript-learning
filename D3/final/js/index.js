@@ -1,5 +1,5 @@
 let margin = ({top: 20, right: 30, bottom: 30, left: 40});
-let size = {width: 1600, height: 800};
+let size = {width: 900, height: 900};
 const innerWidth = size.width - margin.left - margin.right;
 const innerHeight = size.height - margin.top - margin.bottom;
 
@@ -49,8 +49,29 @@ async function main() {
     // 创建主要数据 map
     let worldDataMap = {};
     countryCode.forEach(d => {
-        worldDataMap[d.id] = {name: d.name};
+        worldDataMap[+d.id] = {name: d.name};
     });
+
+    // 添加 economic
+    // 数据太多了......
+    // let ecoData = [
+    //     ...Array.from({length: 63}, (_, index) => index + 1960).map(year => {
+    //         return economic.map(d => [d['Country Name'], d['GDP (current US$)_x'], d['GDP growth (annual %)_x'], year])
+    //     })
+    // ]
+    //
+    // ecoData.forEach(d => {
+    //     d.forEach(j => {
+    //         for (key in worldDataMap) {
+    //             if (worldDataMap[key]['name'] === j[0]) {
+    //                 worldDataMap[key][j[3] + 'gdp'] = j[1]; // GDP
+    //                 worldDataMap[key][j[3] + 'gdp_growth'] = j[2]; // GDP growth
+    //             }
+    //         }
+    //     });
+    // });
+
+    // console.log(ecoData)
 
     // 添加 popluation
     let popData = [
@@ -58,12 +79,12 @@ async function main() {
             population.map(d => [d[year + ' population'], d['country'], year])
         )
     ];
-    console.log(popData)
+
     popData.forEach(d => {
         d.forEach(j => {
             for (key in worldDataMap) {
                 if (worldDataMap[key]['name'] === j[1]) {
-                    worldDataMap[key][j[2]] = j[0];
+                    worldDataMap[key][j[2] + 'pop'] = j[0];
                 }
             }
         })
@@ -84,7 +105,7 @@ async function main() {
     let countries = topojson
         .feature(world, world.objects.countries);
 
-    let projection = d3.geoNaturalEarth1()
+    let projection = d3.geoMercator()
     projection.fitSize([innerWidth, innerHeight], countries);
 
     geoPath = d3.geoPath().projection(projection);
@@ -105,11 +126,12 @@ async function main() {
                 .attr('opacity', 1);
         })
         .on('click', function () {
+            console.log(this)
             console.log(this.id)
-            console.log(worldDataMap[+this.id])
+            console.log(worldDataMap[+this.id]['name'])
         })
         .append('title')
-        .text(d => worldDataMap[+d.id]);
+        .text(d => (!worldDataMap[+d.id]) ? null : worldDataMap[+d.id].name);
 
     /* ========== */
     /* =- TEST -= */
