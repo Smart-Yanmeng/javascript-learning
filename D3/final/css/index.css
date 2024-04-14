@@ -1,10 +1,67 @@
-/*body {*/
-/*    padding: 0;*/
-/*    margin: 0;*/
-/*    border: 0;*/
-/*}*/
+body {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.body-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .map {
     width: 900px;
     height: 900px;
+}
+
+.map .map-svg {
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.info {
+    width: 900px;
+    height: 900px;
+}
+
+.info .up {
+    height: 100px;
+}
+
+.info .mid {
+    height: 700px;
+    display: flex;
+}
+
+.info .mid .left {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.info .mid .left .data {
+    height: 200px;
+}
+
+.info .mid .left .date-select {
+    height: 100px;
+}
+
+.info .mid .left .create-data {
+    height: 100px;
+}
+
+.info .mid .left .more {
+    height: 100px;
+}
+
+.info .mid .summary {
+    width: 600px;
+}
+
+.info .footer {
+    height: 100px;
 }
