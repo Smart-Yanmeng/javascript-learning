@@ -2,3 +2,9 @@
     border: 1px solid black;
     box-sizing: border-box;
 }
+
+.title1 {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
