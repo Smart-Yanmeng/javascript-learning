@@ -82,11 +82,12 @@ async function main() {
         )
     ];
 
-    console.log(popData)
-    console.log(worldDataMap)
+    // console.log(popData)
+    // console.log(worldDataMap)
+
+    // console.log(economic.filter(d => d['Year'] === '2022'))
 
     let eco2022 = economic
-        .filter(d => d['Country Name'] !== 'World')
         .filter(d => d['Year'] === '2022')
         .filter(d => d['GDP (current US$)_x'] !== '')
         .map(d => {
@@ -111,10 +112,15 @@ async function main() {
         .domain([Math.sqrt(minGDPData), Math.sqrt(maxGDPData)])
         .range([0, 1])
 
+    const colorA = d3.rgb(255, 218, 185);
+    const colorB = d3.rgb(139, 0, 0);
+
+    const compute = d3.interpolate(colorA, colorB);
+
     // 颜色比例尺
     let colorScale = d3.scaleLinear()
         .domain([0, 1])
-        .range(['white', 'red']);
+        .range([colorA, colorB]);
 
     popData.forEach(d => {
         d.forEach(j => {
@@ -152,19 +158,18 @@ async function main() {
         .attr('d', geoPath)
         .attr('id', d => +d.id)
         .attr('stroke', 'black')
-        .attr('stroke-width', 1)
+        .attr('stroke-width', 0.7)
         .attr('fill', function (d) {
-            // todo: 通过数据填充颜色
             let id = +d['id'];
             if (isNaN(id)) return 'black';
 
             let gdpDataObj = eco2022.find(d => d['id'] === id)
-            if (!gdpDataObj) return 'black';
+            if (!gdpDataObj) return 'gray';
 
             let gdpData = gdpDataObj['GDP (current US$)_x'];
-            console.log('gdpData -> ', gdpData)
+            // console.log('gdpData -> ', gdpData)
 
-            console.log('linearScale -> ', linearScale(Math.sqrt(gdpData)))
+            // console.log('linearScale -> ', linearScale(Math.sqrt(gdpData)))
 
             return colorScale(linearScale(Math.sqrt(gdpData)));
         })
@@ -183,6 +188,111 @@ async function main() {
         })
         .append('title')
         .text(d => (!worldDataMap[+d.id]) ? null : worldDataMap[+d.id]);
+
+    /* 图例 */
+    let defs = svg.append("defs");
+
+    let linearGradient = defs.append("linearGradient")
+        .attr("id", "linearColor")
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%");
+
+    let stop1 = linearGradient.append("stop")
+        .attr("offset", "0%")
+        .style("stop-color", colorA.toString());
+
+    let stop2 = linearGradient.append("stop")
+        .attr("offset", "100%")
+        .style("stop-color", colorB.toString());
+
+    let dataRect = svg.append("rect")
+        .attr("x", 15)
+        .attr("y", 200)
+        .attr("width", 100)
+        .attr("height", 20)
+        .attr("id", "dataRect")
+        .style("fill", "url(#" + linearGradient.attr("id") + ")");
+
+    let noDataRect = svg.append("rect")
+        .attr("x", 15)
+        .attr("y", 200)
+        .attr("width", 100)
+        .attr("height", 20)
+        .attr("id", "noDataRect")
+        .style("fill", "gray");
+
+    svg.append("text")
+        .attr("x", 15)
+        .attr("y", 230)
+        .text(minGDPData)
+        .attr("transform", `translate(${size.width / 1.77}, ${-size.height / 4.355})`)
+        .style("font-size", "14px")
+        .style("font-style", "italic")
+        .style("font-weight", "bold")
+        .style("fill", colorA);
+
+    svg.append("text")
+        .attr("x", 15)
+        .attr("y", 230)
+        .text(maxGDPData)
+        .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 4.355})`)
+        .style("font-size", "14px")
+        .style("font-style", "italic")
+        .style("font-weight", "bold")
+        .style("fill", colorB);
+
+    d3.select("#dataRect")
+        .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 4.7})`)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+
+    d3.select("#noDataRect")
+        .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 5.55})`)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+
+    // var legend = svg.selectAll(".legend")
+    //     .data([0, 1])
+    //     .enter().append("g")
+    //     // .attr("class", "legend")
+    //     .attr("width", 100)
+    //     .attr("height", 200)
+    //     .attr("transform", function (d, i) {
+    //         return "translate(-100, " + (i * 20 + 30) + ")";
+    //     });
+    //
+    // legend.append("rect")
+    //     .attr("x", size.width - 20)
+    //     .attr("y", 8)
+    //     .attr("width", 40)
+    //     .attr("height", 3)
+    //     .style("fill", function (d) {
+    //         return colorScale(d)
+    //     });
+
+
+    // legend.append("rect")
+    //     .attr("x", size.width - 25) //width是svg的宽度，x属性用来调整位置
+    //     // .attr("x", (width / 160) * 157)
+    //     //或者可以用width的分数来表示，更稳定一些，这是我试出来的，下面同
+    //     .attr("y", 8)
+    //     .attr("width", 40)
+    //     .attr("height", 3)
+    //     .style("fill", function (d) {
+    //         return colorScale(linearScale(d))
+    //     });
+
+
+    // legend.append("text")
+    //     .attr("x", size.width - 30)
+    //     // .attr("x", (width / 40) * 39)
+    //     .attr("y", 15)
+    //     .style("text-anchor", "end") //样式对齐
+    //     .text(function(d) {
+    //         return d.name;
+    //     });
 }
 
 main().then(r => console.log('done'));

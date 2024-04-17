@@ -69,7 +69,7 @@
 }, {
 	"code": "BO",
 	"id": 68,
-	"name": "Bolivia, Plurinational State of"
+	"name": "Bolivia"
 }, {
 	"code": "BA",
 	"id": 70,
@@ -137,7 +137,7 @@
 }, {
 	"code": "CD",
 	"id": 180,
-	"name": "Congo, the Democratic Republic of the"
+	"name": "Congo, Dem. Rep."
 }, {
 	"code": "CR",
 	"id": 188,
@@ -160,7 +160,7 @@
 }, {
 	"code": "CZ",
 	"id": 203,
-	"name": "Czech Republic"
+	"name": "Czechia"
 }, {
 	"code": "DK",
 	"id": 208,
@@ -180,7 +180,7 @@
 }, {
 	"code": "EG",
 	"id": 818,
-	"name": "Egypt"
+	"name": "Egypt, Arab Rep."
 }, {
 	"code": "SV",
 	"id": 222,
@@ -292,7 +292,7 @@
 }, {
 	"code": "IR",
 	"id": 364,
-	"name": "Iran, Islamic Republic of"
+	"name": "Iran, Islamic Rep."
 }, {
 	"code": "IQ",
 	"id": 368,
@@ -336,7 +336,7 @@
 }, {
 	"code": "KR",
 	"id": 410,
-	"name": "Korea, Republic of"
+	"name": "Korea, Rep."
 }, {
 	"code": "KW",
 	"id": 414,
@@ -344,11 +344,11 @@
 }, {
 	"code": "KG",
 	"id": 417,
-	"name": "Kyrgyzstan"
+	"name": "Kyrgyz Republic"
 }, {
 	"code": "LA",
 	"id": 418,
-	"name": "Lao People's Democratic Republic"
+	"name": "Lao PDR"
 }, {
 	"code": "LV",
 	"id": 428,
@@ -539,7 +539,7 @@
 }, {
 	"code": "SK",
 	"id": 703,
-	"name": "Slovakia"
+	"name": "Slovak Republic"
 }, {
 	"code": "SI",
 	"id": 705,
@@ -603,7 +603,7 @@
 }, {
 	"code": "TZ",
 	"id": 834,
-	"name": "Tanzania, United Republic of"
+	"name": "Tanzania"
 }, {
 	"code": "TH",
 	"id": 764,
