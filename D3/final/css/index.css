@@ -11,6 +11,9 @@ body {
     align-items: center;
 }
 
+/***********/
+/* 图片板块 */
+/***********/
 .map {
     width: 900px;
     height: 900px;
@@ -37,6 +40,9 @@ body {
     display: flex;
 }
 
+/**************/
+/* 数据操控板块 */
+/**************/
 .info .mid .left {
     width: 300px;
     display: flex;
@@ -48,14 +54,32 @@ body {
     height: 200px;
 }
 
+/* index.html */
 .info .mid .left .date-select {
     height: 100px;
 }
 
+.info .mid .left .date-select .form1w {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 100px;
+
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* more.html */
+.info .mid .left .more-date-select {
+    height: 400px;
+}
+
+/* index.html */
 .info .mid .left .create-data {
     height: 100px;
 }
 
+/* index.html */
 .info .mid .left .more {
     height: 100px;
 }
@@ -64,6 +88,6 @@ body {
     width: 600px;
 }
 
-.info .footer {
-    height: 100px;
-}
+/*.info .footer {*/
+/*    height: 100px;*/
+/*}*/

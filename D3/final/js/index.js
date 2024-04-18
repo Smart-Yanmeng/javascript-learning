@@ -76,17 +76,17 @@ async function main() {
     // console.log(ecoData)
 
     // 添加 population
-    let popData = [
-        ...[1970, 1980, 1990, 2000, 2010, 2015, 2020, 2022, 2023].map(year =>
-            population.map(d => [d[year + ' population'], d['country'], year])
-        )
-    ];
+    let popData = population.flatMap(d => {
+        return [1970, 1980, 1990, 2000, 2010, 2015, 2020, 2022, 2023].map(year => {
+            return {year: year, population: d[year + ' population'], country: d['country']};
+        });
+    });
 
     // console.log(popData)
     // console.log(worldDataMap)
-
     // console.log(economic.filter(d => d['Year'] === '2022'))
 
+    // 筛选出 2022 年的 GDP 总值数据
     let eco2022 = economic
         .filter(d => d['Year'] === '2022')
         .filter(d => d['GDP (current US$)_x'] !== '')
@@ -100,12 +100,66 @@ async function main() {
 
     eco2022 = eco2022.filter(d => !isNaN(d['id']));
 
-    let maxGDPData = eco2022.reduce((prev, current) => (prev['GDP (current US$)_x'] > current['GDP (current US$)_x'] ? prev : current))['GDP (current US$)_x'];
-    let minGDPData = eco2022.reduce((prev, current) => (prev['GDP (current US$)_x'] < current['GDP (current US$)_x'] ? prev : current))['GDP (current US$)_x'];
+    console.log("GDP Data in 2022 -> ", eco2022)
 
-    console.log(maxGDPData, minGDPData)
+    let ecoArr = eco2022.map(d => d['GDP (current US$)_x'])
 
-    console.log('eco2022 -> ', eco2022)
+    // 错误数据检测
+    let ecoError = 0
+    ecoArr.forEach((d) => {
+        if (d < 0) ecoError++
+    })
+
+    console.log("GDP Error -> ", ecoError)
+
+    let maxGDPData = maxValue(ecoArr)
+    let minGDPData = minValue(ecoArr)
+    let avgGDPData = average(ecoArr)
+    let stdGDPData = standardDeviation(ecoArr)
+    let medianGDPData = median(ecoArr)
+
+    console.log("Max GDP Data in 2022 -> ", maxGDPData)
+    console.log("Min GDP Data in 2022 -> ", minGDPData)
+    console.log("Average GDP Data in 2022 -> ", avgGDPData)
+    console.log("Standard Deviation of GDP Data in 2022 -> ", stdGDPData)
+    console.log("Median GDP Data in 2022 -> ", medianGDPData)
+
+    // 筛选出 2022 年的人口大小数据
+    let pop2022 = popData
+        .filter(d => d['year'] === 2022)
+        .map(d => {
+            return {
+                'Country Name': d['country'],
+                'Population': +d['population'],
+                'id': +Object.keys(worldDataMap).find(key => worldDataMap[key] === d['country'])
+            }
+        })
+
+    pop2022 = pop2022.filter(d => !isNaN(d['id']));
+
+    console.log("Population Data in 2022 -> ", pop2022)
+
+    let popArr = pop2022.map(d => d['Population'])
+
+    // 错误数据检测
+    let popError = 0
+    popArr.forEach((d) => {
+        if (d < 0) popError++
+    })
+
+    console.log("Population Error -> ", popError)
+
+    let maxPopData = maxValue(popArr)
+    let minPopData = minValue(popArr)
+    let avgPopData = average(popArr)
+    let stdPopData = standardDeviation(popArr)
+    let medianPopData = median(popArr)
+
+    console.log("Max Population Data in 2022 -> ", maxPopData)
+    console.log("Min Population Data in 2022 -> ", minPopData)
+    console.log("Average Population Data in 2022 -> ", avgPopData)
+    console.log("Standard Deviation of Population Data in 2022 -> ", stdPopData)
+    console.log("Median Population Data in 2022 -> ", medianPopData)
 
     // 线性比例尺
     let linearScale = d3.scaleLinear()
@@ -121,16 +175,6 @@ async function main() {
     let colorScale = d3.scaleLinear()
         .domain([0, 1])
         .range([colorA, colorB]);
-
-    popData.forEach(d => {
-        d.forEach(j => {
-            for (key in worldDataMap) {
-                if (worldDataMap[key]['name'] === j[1]) {
-                    worldDataMap[key][j[2] + 'pop'] = j[0];
-                }
-            }
-        })
-    })
 
     console.log("myWorld", worldDataMap)
 
@@ -189,9 +233,13 @@ async function main() {
         .append('title')
         .text(d => (!worldDataMap[+d.id]) ? null : worldDataMap[+d.id]);
 
-    /* 图例 */
+
+    /* ============ */
+    /* =- LEGEND -= */
+    /* ============ */
     let defs = svg.append("defs");
 
+    // 渐变色图例样式定义
     let linearGradient = defs.append("linearGradient")
         .attr("id", "linearColor")
         .attr("x1", "0%")
@@ -223,6 +271,7 @@ async function main() {
         .attr("id", "noDataRect")
         .style("fill", "gray");
 
+    // 图例文字
     svg.append("text")
         .attr("x", 15)
         .attr("y", 230)
@@ -232,7 +281,6 @@ async function main() {
         .style("font-style", "italic")
         .style("font-weight", "bold")
         .style("fill", colorA);
-
     svg.append("text")
         .attr("x", 15)
         .attr("y", 230)
@@ -243,6 +291,17 @@ async function main() {
         .style("font-weight", "bold")
         .style("fill", colorB);
 
+    svg.append("text")
+        .attr("x", 15)
+        .attr("y", 230)
+        .text("No Data")
+        .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 5.075})`)
+        .style("font-size", "14px")
+        .style("font-style", "italic")
+        .style("font-weight", "bold")
+        .style("fill", "gray");
+
+    // 图例形状
     d3.select("#dataRect")
         .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 4.7})`)
         .attr("stroke", "black")
@@ -252,47 +311,7 @@ async function main() {
         .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 5.55})`)
         .attr("stroke", "black")
         .attr("stroke-width", 2);
-
-    // var legend = svg.selectAll(".legend")
-    //     .data([0, 1])
-    //     .enter().append("g")
-    //     // .attr("class", "legend")
-    //     .attr("width", 100)
-    //     .attr("height", 200)
-    //     .attr("transform", function (d, i) {
-    //         return "translate(-100, " + (i * 20 + 30) + ")";
-    //     });
-    //
-    // legend.append("rect")
-    //     .attr("x", size.width - 20)
-    //     .attr("y", 8)
-    //     .attr("width", 40)
-    //     .attr("height", 3)
-    //     .style("fill", function (d) {
-    //         return colorScale(d)
-    //     });
-
-
-    // legend.append("rect")
-    //     .attr("x", size.width - 25) //width是svg的宽度，x属性用来调整位置
-    //     // .attr("x", (width / 160) * 157)
-    //     //或者可以用width的分数来表示，更稳定一些，这是我试出来的，下面同
-    //     .attr("y", 8)
-    //     .attr("width", 40)
-    //     .attr("height", 3)
-    //     .style("fill", function (d) {
-    //         return colorScale(linearScale(d))
-    //     });
-
-
-    // legend.append("text")
-    //     .attr("x", size.width - 30)
-    //     // .attr("x", (width / 40) * 39)
-    //     .attr("y", 15)
-    //     .style("text-anchor", "end") //样式对齐
-    //     .text(function(d) {
-    //         return d.name;
-    //     });
 }
 
+// Main 函数
 main().then(r => console.log('done'));
