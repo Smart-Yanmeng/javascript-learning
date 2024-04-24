@@ -9,18 +9,19 @@
     <link rel="stylesheet" href="./../css/common.css">
 </head>
 <body>
+<!--<svg id="more-data" class="border"></svg>-->
 <div class="body-container">
     <div class="map border">
-        <!--        <svg class="border"></svg>-->
+        <svg id="more-data" class="border"></svg>
     </div>
     <div class="info">
-        <div class="up title1 border">标题</div>
+        <div id="more-title" class="up title1 border">标题</div>
         <div class="mid border">
             <div class="left border">
                 <div class="more-date-select border">数据选择框</div>
                 <div class="create-more-data border btn">生成数据按钮</div>
                 <div class="analyse-data border btn">数据分析按钮</div>
-                <div class="back-to-map border btn">返回大地图</div>
+                <div class="back-to-map border btn" onclick="to_map()">返回大地图</div>
             </div>
             <div class="summary border">统计框</div>
         </div>
@@ -28,7 +29,8 @@
     </div>
 </div>
 
-<script src="./../js/statistics.js"></script>
+<script src="./../js/more.js"></script>
 <script src="./../js/common.js"></script>
+<script src="./../js/math-utils.js"></script>
 </body>
 </html>

@@ -14,13 +14,13 @@
         <svg class="map-svg border"></svg>
     </div>
     <div class="info">
-        <div class="up title1 border">GDP of Countries around the World in 2022</div>
+        <div id="index-title" class="up title1 border">GDP of Countries around the World in 2022</div>
         <div class="mid border">
             <div class="left border">
                 <div class="data border">
                     <div class="date-select border">
                         <form class="form1w">请选择年份:&nbsp&nbsp
-                            <select>
+                            <select class="year-selection">
                                 <option>2022</option>
                                 <option>2021</option>
                                 <option>2020</option>
@@ -87,7 +87,7 @@
                             </select>
                         </form>
                     </div>
-                    <div class="create-data border">生成数据按钮</div>
+                    <div class="create-data border" onclick="main()">生成数据</div>
                 </div>
                 <div class="more border">
                     <div class="more-info-btn btn" onclick="to_more()">更多信息</div>

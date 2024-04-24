@@ -3,11 +3,11 @@ let margin = ({top: 20, right: 30, bottom: 30, left: 40});
 // let height = 800;
 let size = {width: 1600, height: 800};
 
-// let selectBox = d3.select('body')
-//     .append('p')
-//     .append('select')
-//     .attr('name', 'gender')
-//     .attr('width', '50px');
+let selectBox = d3.select('body')
+    .append('p')
+    .append('select')
+    .attr('name', 'gender')
+    .attr('width', '50px');
 
 let svg = d3.select("body").append("svg")
     .attr('width', size.width).attr('height', size.height);
@@ -65,11 +65,11 @@ d3.json("./countries-110m.json").then(world => {
     //     .attr('fill', 'green')
     //     .attr('stroke', 'none');
 
-    // selectBox.selectAll('option')
-    //     .data(countries.features)
-    //     .join('option')
-    //     .attr('value', d => 'p' + d.id)
-    //     .text(d => d.properties.name);
+    selectBox.selectAll('option')
+        .data(countries.features)
+        .join('option')
+        .attr('value', d => 'p' + d.id)
+        .text(d => d.properties.name);
 
     // let i = 0;
 

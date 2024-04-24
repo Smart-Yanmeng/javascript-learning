@@ -77,6 +77,11 @@ body {
 /* index.html */
 .info .mid .left .create-data {
     height: 100px;
+    text-align: center;
+    line-height: 100px;
+
+    font-size: 20px;
+    font-weight: bold;
 }
 
 /* index.html */
