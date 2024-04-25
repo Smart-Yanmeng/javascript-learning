@@ -1,4 +1,4 @@
-let margin = ({top: 50, right: 50, bottom: 50, left: 70});
+let margin = ({top: 50, right: 50, bottom: 50, left: 80});
 let size = {width: 900, height: 900};
 const innerWidth = size.width - margin.left - margin.right;
 const innerHeight = size.height - margin.top - margin.bottom;
@@ -14,9 +14,13 @@ const xValue = (datum) => {
     return +datum['year']
 }
 const yValue = (datum) => {
-    return +datum['population'] / maxPopData
+    // 归一化
+    return (+datum['population'] - minPopData) / (maxPopData - minPopData)
 }
 
+/**
+ * 折线图
+ */
 const renderInit = function (data) {
     xScale = d3.scaleLinear()
         .domain(d3.extent(data, xValue))
@@ -33,11 +37,13 @@ const renderInit = function (data) {
         .attr('id', 'mainGroup')
 
     const xAxis = d3.axisBottom(xScale)
-    // .tickSize(-innerHeight)
-    .tickPadding(10)
-    .ticks(10)
+        // .tickSize(-innerHeight)
+        .tickPadding(10)
+        .ticks(10)
     // .tickFormat(d3.format('d'))
     const yAxis = d3.axisLeft(yScale)
+        .ticks(20)
+        .tickPadding(10)
 
     const xAxisG = g.append('g')
         .call(xAxis)
@@ -69,6 +75,8 @@ async function main() {
     const countryCode = await d3.json("./../data/world-110m-country-codes.json");
     const population = await d3.csv("./../data/world_population_data.csv");
 
+    console.log("population -> ", population)
+
     // ID -> NAME
     let worldDataMap = {};
     countryCode.forEach(d => {
@@ -84,20 +92,21 @@ async function main() {
 
     console.log("popData -> ", popData)
 
-    // 筛选出 2022 年的人口大小数据
+    // 筛选出中国的人口大小数据
     let popCountry = popData
         .filter(d => d['country'] === 'China')
         .map(d => {
             return {
                 'year': d['year'],
                 'population': +d['population'],
+                'country': d['country'],
                 'id': +Object.keys(worldDataMap).find(key => worldDataMap[key] === d['country'])
             }
         })
 
     popCountry = popCountry.filter(d => !isNaN(d['id']))
 
-    console.log("Population Data in China -> ", popCountry)
+    console.log("Population Data -> ", popCountry)
 
     let popArr = popCountry.map(d => d['population'])
 
@@ -128,11 +137,7 @@ async function main() {
     /********/
     renderInit(popCountry)
 
-    popData.forEach(d => {
-
-    })
     console.log(xValue(popData[0]))
 }
-
 
 main().then(() => console.log('done'))
