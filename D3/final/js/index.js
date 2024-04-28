@@ -87,6 +87,8 @@ async function main() {
 
     let ecoArr = selectEco.map(d => d['GDP (current US$)_x'])
 
+    console.log("selectEco -> ", selectEco)
+
     // 错误数据检测
     {
         let ecoError = 0
@@ -175,7 +177,14 @@ async function main() {
                 console.log(worldDataMap[+this.id])
             })
             .append('title')
-            .text(d => (!worldDataMap[+d.id]) ? null : worldDataMap[+d.id])
+            .text(d => {
+                let id = +d.id
+                name = (!worldDataMap[id]) ? null : worldDataMap[id]
+                let ecoData = selectEco.find(d => d['id'] === id)
+
+                if (!ecoData) return name;
+                else return name + '\n' + 'GDP: ' + ecoData['GDP (current US$)_x']
+            })
     }
 
 
@@ -186,77 +195,77 @@ async function main() {
     let linearGradient
 
     // 渐变色图例
-    {
-        linearGradient = defs.append("linearGradient")
-            .attr("id", "linearColor")
-            .attr("x1", "0%")
-            .attr("y1", "0%")
-            .attr("x2", "100%")
-            .attr("y2", "0%");
-        linearGradient.append("stop")
-            .attr("offset", "0%")
-            .style("stop-color", colorA.toString())
-        linearGradient.append("stop")
-            .attr("offset", "100%")
-            .style("stop-color", colorB.toString())
-    }
+    // {
+    //     linearGradient = defs.append("linearGradient")
+    //         .attr("id", "linearColor")
+    //         .attr("x1", "0%")
+    //         .attr("y1", "0%")
+    //         .attr("x2", "100%")
+    //         .attr("y2", "0%");
+    //     linearGradient.append("stop")
+    //         .attr("offset", "0%")
+    //         .style("stop-color", colorA.toString())
+    //     linearGradient.append("stop")
+    //         .attr("offset", "100%")
+    //         .style("stop-color", colorB.toString())
+    // }
 
     // 图例
-    {
-        svg.append("rect")
-            .attr("x", 15)
-            .attr("y", 200)
-            .attr("width", 100)
-            .attr("height", 20)
-            .attr("id", "dataRect")
-            .style("fill", "url(#" + linearGradient.attr("id") + ")");
-        svg.append("rect")
-            .attr("x", 15)
-            .attr("y", 200)
-            .attr("width", 100)
-            .attr("height", 20)
-            .attr("id", "noDataRect")
-            .style("fill", "gray");
-
-        // 图例文字
-        svg.append("text")
-            .attr("x", 15)
-            .attr("y", 230)
-            .text(minGDPData)
-            .attr("transform", `translate(${size.width / 1.77}, ${-size.height / 4.355})`)
-            .style("font-size", "14px")
-            .style("font-style", "italic")
-            .style("font-weight", "bold")
-            .style("fill", colorA);
-        svg.append("text")
-            .attr("x", 15)
-            .attr("y", 230)
-            .text(maxGDPData)
-            .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 4.355})`)
-            .style("font-size", "14px")
-            .style("font-style", "italic")
-            .style("font-weight", "bold")
-            .style("fill", colorB);
-        svg.append("text")
-            .attr("x", 15)
-            .attr("y", 230)
-            .text("No Data")
-            .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 5.075})`)
-            .style("font-size", "14px")
-            .style("font-style", "italic")
-            .style("font-weight", "bold")
-            .style("fill", "gray");
-
-        // 图例形状
-        d3.select("#dataRect")
-            .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 4.7})`)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
-        d3.select("#noDataRect")
-            .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 5.55})`)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
-    }
+    // {
+    //     svg.append("rect")
+    //         .attr("x", 15)
+    //         .attr("y", 200)
+    //         .attr("width", 100)
+    //         .attr("height", 20)
+    //         .attr("id", "dataRect")
+    //         .style("fill", "url(#" + linearGradient.attr("id") + ")");
+    //     svg.append("rect")
+    //         .attr("x", 15)
+    //         .attr("y", 200)
+    //         .attr("width", 100)
+    //         .attr("height", 20)
+    //         .attr("id", "noDataRect")
+    //         .style("fill", "gray");
+    //
+    //     // 图例文字
+    //     svg.append("text")
+    //         .attr("x", 15)
+    //         .attr("y", 230)
+    //         .text(minGDPData)
+    //         .attr("transform", `translate(${size.width / 1.77}, ${-size.height / 4.355})`)
+    //         .style("font-size", "14px")
+    //         .style("font-style", "italic")
+    //         .style("font-weight", "bold")
+    //         .style("fill", colorA);
+    //     svg.append("text")
+    //         .attr("x", 15)
+    //         .attr("y", 230)
+    //         .text(maxGDPData)
+    //         .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 4.355})`)
+    //         .style("font-size", "14px")
+    //         .style("font-style", "italic")
+    //         .style("font-weight", "bold")
+    //         .style("fill", colorB);
+    //     svg.append("text")
+    //         .attr("x", 15)
+    //         .attr("y", 230)
+    //         .text("No Data")
+    //         .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 5.075})`)
+    //         .style("font-size", "14px")
+    //         .style("font-style", "italic")
+    //         .style("font-weight", "bold")
+    //         .style("fill", "gray");
+    //
+    //     // 图例形状
+    //     d3.select("#dataRect")
+    //         .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 4.7})`)
+    //         .attr("stroke", "black")
+    //         .attr("stroke-width", 2);
+    //     d3.select("#noDataRect")
+    //         .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 5.55})`)
+    //         .attr("stroke", "black")
+    //         .attr("stroke-width", 2);
+    // }
 }
 
 // Main 函数
