@@ -1,23 +1,32 @@
 let margin = ({top: 10, right: 10, bottom: 10, left: 10})
-let size = {width: 900, height: 900}
-const innerWidth = size.width - margin.left - margin.right
-const innerHeight = size.height - margin.top - margin.bottom
 
 let maxGDPData, minGDPData
 
-// SVG
-let svg = d3.select(".map-svg")
-    .attr('width', size.width)
-    .attr('height', size.height);
+// MAIN SVG
+let mainSvg = d3.select(".map-svg")
+let mainSize = {width: mainSvg.attr('width'), height: mainSvg.attr('height')}
+const mainInnerWidth = mainSize.width - margin.left - margin.right
+const mainInnerHeight = mainSize.height - margin.top - margin.bottom
+
+// GDP SVG
+let gdpSvg = d3.select(".gdp-svg")
+let gdpSize = {width: gdpSvg.attr('width'), height: gdpSvg.attr('height')}
+const gdpMargin = ({top: 30, right: 50, bottom: 80, left: 120})
+const gdpInnerWidth = gdpSize.width - gdpMargin.left - gdpMargin.right
+const gdpInnerHeight = gdpSize.height - gdpMargin.top - gdpMargin.bottom
 
 /**
- * 初始化地图，防止 append 多次叠加
+ * 初始化 SVG 图片，防止 append 多次叠加
  */
 function mapInit() {
-    svg.selectAll('g').remove();
-    svg.selectAll('rect').remove();
-    svg.selectAll('text').remove();
-    svg.selectAll('defs').remove();
+    mainSvg.selectAll('g').remove();
+    mainSvg.selectAll('rect').remove();
+    mainSvg.selectAll('text').remove();
+    mainSvg.selectAll('defs').remove();
+
+    gdpSvg.selectAll('g').remove();
+    gdpSvg.selectAll('rect').remove();
+    gdpSvg.selectAll('text').remove();
 }
 
 /**
@@ -82,12 +91,19 @@ async function main() {
         })
         .filter(d => !isNaN(d['id']))
 
+    // 动态绑定到标题
     document.getElementById('index-title')
         .innerHTML = 'GDP of Countries around the World in ' + selectYear
 
+    // GDP
     let ecoArr = selectEco.map(d => d['GDP (current US$)_x'])
 
+    // NAME -> GDP
+    let ecoInfoArr = selectEco.map(d => ([d['Country Name'], d['GDP (current US$)_x']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
+
     console.log("selectEco -> ", selectEco)
+    console.log("ecoArr -> ", ecoArr)
+    console.log("ecoInfoArr -> ", ecoInfoArr)
 
     // 错误数据检测
     {
@@ -126,13 +142,13 @@ async function main() {
         .range([colorA, colorB])
 
     /* ========= */
-    /* =- MAP -= */
+    /* =- SVG -= */
     /* ========= */
     mapInit()
 
     // 绘制地图
     {
-        let group = svg.append("g");
+        let group = mainSvg.append("g");
 
         let countryShape = group.append('g')
             .attr('class', 'countryShape')
@@ -143,7 +159,7 @@ async function main() {
 
         // 投影
         let projection = d3.geoMercator()
-        projection.fitSize([innerWidth, innerHeight], countries);
+        projection.fitSize([mainInnerWidth, mainInnerHeight], countries);
 
         let geoPath = d3.geoPath().projection(projection);
 
@@ -187,85 +203,145 @@ async function main() {
             })
     }
 
+    // 绘制条形统计图
+    {
+        const xScale = d3.scaleLinear()
+            // 归一化
+            .domain([0, d3.max(ecoInfoArr, d => d[1] / 1000000000000)])
+            .range([0, gdpInnerWidth])
+        const yScale = d3.scaleBand()
+            .domain(ecoInfoArr.map(d => d[0]))
+            .range([0, gdpInnerHeight])
+            .padding(0.2)
+
+        const g = gdpSvg.append('g')
+            .attr('id', 'mainGroup')
+            .attr('transform', `translate(${gdpMargin.left}, ${gdpMargin.top})`)
+
+        const xAxis = d3.axisBottom(xScale)
+        const yAxis = d3.axisLeft(yScale)
+
+        g.append('g')
+            .call(xAxis).attr('transform', `translate(0, ${gdpInnerHeight})`)
+            .attr('id', 'xAxis')
+        g.append('g').call(yAxis)
+
+        // 绘制矩形
+        ecoInfoArr.forEach(d => {
+            g.append('rect')
+                .attr('y', yScale(d[0]))
+                .attr('width', xScale(d[1] / 1000000000000))
+                .attr('height', yScale.bandwidth())
+                .attr('fill', 'green')
+                .attr('opacity', '0.7')
+                .attr('gdp', d[1])
+        })
+
+        d3.selectAll('#mainGroup rect')
+            .on('mouseover', function () {
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .attr('fill', 'red')
+                document.getElementById('select-gdp-data').innerText = 'GDP: ' + d3.select(this).attr('gdp')
+            })
+            .on('mouseout', function () {
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .attr('fill', 'green')
+                document.getElementById('select-gdp-data').innerText = 'You can select the rectangle to see the GDP data :)'
+            })
+
+        d3.selectAll('.tick text')
+            .attr('font-size', '16px')
+            .attr('font-weight', 'bold')
+
+        g.append('text').text('GDP (Trillion $)')
+            .attr('font-size', '20px')
+            .attr('font-weight', 'bold')
+            .attr('transform', `translate(${gdpInnerWidth / 2}, ${gdpInnerHeight + 50})`)
+            .attr('text-anchor', 'middle')
+    }
 
     /* ============ */
     /* =- LEGEND -= */
     /* ============ */
-    let defs = svg.append("defs")
+    let defs = mainSvg.append("defs")
     let linearGradient
 
     // 渐变色图例
-    // {
-    //     linearGradient = defs.append("linearGradient")
-    //         .attr("id", "linearColor")
-    //         .attr("x1", "0%")
-    //         .attr("y1", "0%")
-    //         .attr("x2", "100%")
-    //         .attr("y2", "0%");
-    //     linearGradient.append("stop")
-    //         .attr("offset", "0%")
-    //         .style("stop-color", colorA.toString())
-    //     linearGradient.append("stop")
-    //         .attr("offset", "100%")
-    //         .style("stop-color", colorB.toString())
-    // }
+    {
+        linearGradient = defs.append("linearGradient")
+            .attr("id", "linearColor")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%");
+        linearGradient.append("stop")
+            .attr("offset", "0%")
+            .style("stop-color", colorA.toString())
+        linearGradient.append("stop")
+            .attr("offset", "100%")
+            .style("stop-color", colorB.toString())
+    }
 
     // 图例
-    // {
-    //     svg.append("rect")
-    //         .attr("x", 15)
-    //         .attr("y", 200)
-    //         .attr("width", 100)
-    //         .attr("height", 20)
-    //         .attr("id", "dataRect")
-    //         .style("fill", "url(#" + linearGradient.attr("id") + ")");
-    //     svg.append("rect")
-    //         .attr("x", 15)
-    //         .attr("y", 200)
-    //         .attr("width", 100)
-    //         .attr("height", 20)
-    //         .attr("id", "noDataRect")
-    //         .style("fill", "gray");
-    //
-    //     // 图例文字
-    //     svg.append("text")
-    //         .attr("x", 15)
-    //         .attr("y", 230)
-    //         .text(minGDPData)
-    //         .attr("transform", `translate(${size.width / 1.77}, ${-size.height / 4.355})`)
-    //         .style("font-size", "14px")
-    //         .style("font-style", "italic")
-    //         .style("font-weight", "bold")
-    //         .style("fill", colorA);
-    //     svg.append("text")
-    //         .attr("x", 15)
-    //         .attr("y", 230)
-    //         .text(maxGDPData)
-    //         .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 4.355})`)
-    //         .style("font-size", "14px")
-    //         .style("font-style", "italic")
-    //         .style("font-weight", "bold")
-    //         .style("fill", colorB);
-    //     svg.append("text")
-    //         .attr("x", 15)
-    //         .attr("y", 230)
-    //         .text("No Data")
-    //         .attr("transform", `translate(${size.width / 1.245}, ${-size.height / 5.075})`)
-    //         .style("font-size", "14px")
-    //         .style("font-style", "italic")
-    //         .style("font-weight", "bold")
-    //         .style("fill", "gray");
-    //
-    //     // 图例形状
-    //     d3.select("#dataRect")
-    //         .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 4.7})`)
-    //         .attr("stroke", "black")
-    //         .attr("stroke-width", 2);
-    //     d3.select("#noDataRect")
-    //         .attr("transform", `translate(${size.width / 1.47}, ${-size.height / 5.55})`)
-    //         .attr("stroke", "black")
-    //         .attr("stroke-width", 2);
-    // }
+    {
+        mainSvg.append("rect")
+            .attr("x", 15)
+            .attr("y", 200)
+            .attr("width", 100)
+            .attr("height", 20)
+            .attr("id", "dataRect")
+            .style("fill", "url(#" + linearGradient.attr("id") + ")");
+        mainSvg.append("rect")
+            .attr("x", 15)
+            .attr("y", 200)
+            .attr("width", 100)
+            .attr("height", 20)
+            .attr("id", "noDataRect")
+            .style("fill", "gray");
+
+        // 图例文字
+        mainSvg.append("text")
+            .attr("x", 15)
+            .attr("y", 230)
+            .text(minGDPData)
+            .attr("transform", `translate(${mainSize.width / 1.77}, ${-mainSize.height / 4.355})`)
+            .style("font-size", "14px")
+            .style("font-style", "italic")
+            .style("font-weight", "bold")
+            .style("fill", colorA);
+        mainSvg.append("text")
+            .attr("x", 15)
+            .attr("y", 230)
+            .text(maxGDPData)
+            .attr("transform", `translate(${mainSize.width / 1.245}, ${-mainSize.height / 4.355})`)
+            .style("font-size", "14px")
+            .style("font-style", "italic")
+            .style("font-weight", "bold")
+            .style("fill", colorB);
+        mainSvg.append("text")
+            .attr("x", 15)
+            .attr("y", 230)
+            .text("No Data")
+            .attr("transform", `translate(${mainSize.width / 1.245}, ${-mainSize.height / 5.075})`)
+            .style("font-size", "14px")
+            .style("font-style", "italic")
+            .style("font-weight", "bold")
+            .style("fill", "gray");
+
+        // 图例形状
+        d3.select("#dataRect")
+            .attr("transform", `translate(${mainSize.width / 1.47}, ${-mainSize.height / 4.7})`)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+        d3.select("#noDataRect")
+            .attr("transform", `translate(${mainSize.width / 1.47}, ${-mainSize.height / 5.55})`)
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+    }
 }
 
 // Main 函数

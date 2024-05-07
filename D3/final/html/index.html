@@ -11,15 +11,16 @@
 <body>
 <div class="body-container">
     <div class="map">
-        <svg class="map-svg border"></svg>
+        <svg class="map-svg border" width="900" height="900"></svg>
     </div>
+    <div class="void border"></div>
     <div class="info">
         <div id="index-title" class="up title1 border">GDP of Countries around the World in 2022</div>
         <div class="mid border">
             <div class="left border">
                 <div class="data border">
                     <div class="date-select border">
-                        <form class="form1w">请选择年份:&nbsp&nbsp
+                        <form class="text-20-bold form1w">请选择年份:&nbsp&nbsp
                             <select class="year-selection">
                                 <option>2022</option>
                                 <option>2021</option>
@@ -87,13 +88,23 @@
                             </select>
                         </form>
                     </div>
-                    <div class="create-data border" onclick="main()">生成数据</div>
+                    <div class="create-data text-20-bold border" onclick="main()">生成数据</div>
                 </div>
                 <div class="more border">
-                    <div class="more-info-btn btn" onclick="to_more()">更多信息</div>
+                    <div class="more-info-btn text-20-bold btn" onclick="to_more()">更多信息</div>
                 </div>
             </div>
-            <div class="summary border">统计框</div>
+            <div class="summary border">
+                <div class="summary-word text-20-bold border">
+                    GDP 前五位：
+                </div>
+                <div class="summary-svg border">
+                    <svg class="gdp-svg" width="600" height="400"></svg>
+                    <div id="select-gdp-data" class="text-20-bold inline-100 border">You can select the rectangle to see the GDP
+                        data :)
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="footer border">尾注</div>
     </div>

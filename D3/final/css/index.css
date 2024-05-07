@@ -24,6 +24,10 @@ body {
     padding: 10px;
 }
 
+.void {
+    width: 20px;
+}
+
 .info {
     width: 900px;
     height: 900px;
@@ -62,11 +66,7 @@ body {
 .info .mid .left .date-select .form1w {
     width: 100%;
     height: 100%;
-    text-align: center;
     line-height: 100px;
-
-    font-size: 20px;
-    font-weight: bold;
 }
 
 /* more.html */
@@ -77,11 +77,7 @@ body {
 /* index.html */
 .info .mid .left .create-data {
     height: 100px;
-    text-align: center;
     line-height: 100px;
-
-    font-size: 20px;
-    font-weight: bold;
 }
 
 /* index.html */
@@ -91,6 +87,20 @@ body {
 
 .info .mid .summary {
     width: 600px;
+}
+
+.info .mid .summary .summary-word {
+    height: 200px;
+    text-align: center;
+    line-height: 100px;
+}
+
+.info .mid .summary .summary-svg {
+    height: 400px;
+}
+
+.info .mid .summary .summary-svg #select-gdp-data {
+    height: 100px;
 }
 
 /*.info .footer {*/
