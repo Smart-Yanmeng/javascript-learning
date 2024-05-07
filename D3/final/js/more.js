@@ -1,4 +1,4 @@
-let margin = ({top: 100, right: 80, bottom: 100, left: 80});
+let margin = ({top: 170, right: 130, bottom: 120, left: 120});
 let size = {width: 900, height: 900};
 const innerWidth = size.width - margin.left - margin.right;
 const innerHeight = size.height - margin.top - margin.bottom;
@@ -26,11 +26,9 @@ let risingSvg = d3.select('#rising-data')
 const risingXValue = (datum) => {
     return +datum['year']
 }
-
 const risingYGdpValue = (datum) => {
     return +datum['gdp'] / 1000000000000
 }
-
 const risingYGdpRisingValue = (datum) => {
     return +datum['growth']
 }
@@ -54,10 +52,8 @@ const moreData = function (data) {
         .attr('id', 'mainGroup')
 
     const moreXAxis = d3.axisBottom(moreXScale)
-        // .tickSize(-innerHeight)
         .tickPadding(10)
         .ticks(10)
-    // .tickFormat(d3.format('d'))
     const moreYAxis = d3.axisLeft(moreYScale)
         .ticks(20)
         .tickPadding(10)
@@ -97,7 +93,7 @@ const risingData = function (data) {
 
     const risingGdpYScale = d3.scaleLinear()
         .domain(d3.extent(data, risingYGdpValue))
-        .range([0, innerHeight])
+        .range([innerHeight, 0])
         .nice()
 
     const risingGdpRisingYScale = d3.scaleLinear()
@@ -118,45 +114,116 @@ const risingData = function (data) {
     let risingGdpRisingAxis = d3.axisRight(risingGdpRisingYScale)
         .ticks(10)
 
-    g.append('g')
-        .call(risingXAxis)
-        .attr('transform', `translate(0, ${innerHeight})`)
-    g.append('g')
-        .call(risingGdpYAxis)
-    g.append('g')
-        .attr('transform', `translate(${innerWidth},0)`)
-        .call(risingGdpRisingAxis)
+    // 画坐标轴
+    {
+        g.append('g')
+            .call(risingXAxis)
+            .attr('transform', `translate(0, ${innerHeight})`)
+        g.append('g')
+            .call(risingGdpYAxis)
+        g.append('g')
+            .attr('transform', `translate(${innerWidth},0)`)
+            .call(risingGdpRisingAxis)
+    }
 
-    data.forEach(d => {
-        let rectHeight = risingGdpYScale(risingYGdpValue(d));
-        let rectY = innerHeight - rectHeight;
+    // 画条形图
+    {
+        data.forEach(d => {
+            g.append('rect')
+                .attr('x', risingXScale(risingXValue(d)))
+                .attr('y', risingGdpYScale(risingYGdpValue(d)))
+                .attr('width', '5')
+                .attr('height', innerHeight - risingGdpYScale(risingYGdpValue(d)))
+                .attr('fill', 'green')
+                .attr('opacity', '0.7')
+                .attr('gdp', risingYGdpValue(d))
+        })
 
+        g.selectAll('.tick text')
+            .attr('font-size', '1.5em')
+
+        g.append('path')
+            .attr('id', 'alterPath')
+
+        const line = d3.line()
+            .x(d => risingXScale(risingXValue(d)))
+            .y(d => risingGdpRisingYScale(risingYGdpRisingValue(d)))
+
+        d3.select('#alterPath').datum(data)
+            .attr('stroke', 'red')
+            .attr('stroke-width', 2.5)
+            .attr('fill', 'none')
+            .transition().duration(2000)
+            .attr('d', line)
+    }
+
+    // 添加图例
+    {
         g.append('rect')
-            .attr('x', risingXScale(risingXValue(d)))
-            .attr('y', rectY)
-            .attr('width', '5')
-            .attr('height', risingGdpYScale(risingYGdpValue(d)))
+            .attr('x', innerWidth - 100)
+            .attr('y', -80)
+            .attr('width', 100)
+            .attr('height', 10)
             .attr('fill', 'green')
             .attr('opacity', '0.7')
-            .attr('gdp', risingYGdpValue(d))
-    })
 
-    g.selectAll('.tick text')
-        .attr('font-size', '2em')
+        g.append('rect')
+            .attr('x', innerWidth - 100)
+            .attr('y', -40)
+            .attr('width', 100)
+            .attr('height', 5)
+            .attr('fill', 'red')
+            .attr('opacity', '0.7')
 
-    g.append('path')
-        .attr('id', 'alterPath')
+        g.append('text')
+            .attr('x', innerWidth - 100)
+            .attr('y', -85)
+            .text('GDP')
+            .attr('font-size', '1em')
 
-    const line = d3.line()
-        .x(d => risingXScale(risingXValue(d)))
-        .y(d => risingGdpRisingYScale(risingYGdpRisingValue(d)))
+        g.append('text')
+            .attr('x', innerWidth - 100)
+            .attr('y', -45)
+            .text('GDP Growth')
+            .attr('font-size', '1em')
+    }
 
-    d3.select('#alterPath').datum(data)
-        .attr('stroke', 'red')
-        .attr('stroke-width', 2.5)
-        .attr('fill', 'none')
-        .transition().duration(2000)
-        .attr('d', line)
+    // 添加标题
+    {
+        g.append('text')
+            .attr('x', 0)
+            .attr('y', -70)
+            .text('GDP and GDP Growth')
+            .attr('font-size', '2em')
+
+        g.append('text')
+            .attr('x', 0)
+            .attr('y', -40)
+            .text('in China')
+            .attr('font-size', '1.2em')
+
+        g.append('text')
+            .attr('x', innerWidth / 2)
+            .attr('y', innerHeight + 60)
+            .text('Year')
+            .attr('font-size', '1.5em')
+            .attr('text-anchor', 'middle')
+
+        g.append('text')
+            .attr('x', -innerHeight / 2)
+            .attr('y', -60)
+            .text('GDP ( Trillion US$ )')
+            .attr('font-size', '1.5em')
+            .attr('transform', 'rotate(-90)')
+            .attr('text-anchor', 'middle')
+
+        g.append('text')
+            .attr('x', innerHeight / 2 - 95)
+            .attr('y', -innerWidth - 60)
+            .text('GDP Growth ( % )')
+            .attr('font-size', '1.5em')
+            .attr('transform', 'rotate(90)')
+    }
 }
 
 async function main() {

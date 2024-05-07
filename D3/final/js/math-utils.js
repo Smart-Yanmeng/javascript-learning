@@ -1,6 +1,6 @@
 /**
  * 标准差
- * @param arr
+ * @param arr Array<number>
  * @returns {number}
  */
 function standardDeviation(arr) {
@@ -13,7 +13,7 @@ function standardDeviation(arr) {
 
 /**
  * 最大值
- * @param arr
+ * @param arr Array<number>
  * @returns {number}
  */
 function maxValue(arr) {
@@ -22,7 +22,7 @@ function maxValue(arr) {
 
 /**
  * 最小值
- * @param arr
+ * @param arr Array<number>
  * @returns {number}
  */
 function minValue(arr) {
@@ -31,7 +31,7 @@ function minValue(arr) {
 
 /**
  * 平均值
- * @param arr
+ * @param arr Array<number>
  * @returns {number}
  */
 function average(arr) {
@@ -40,7 +40,7 @@ function average(arr) {
 
 /**
  * 中位数
- * @param arr
+ * @param arr Array<number>
  * @returns {number}
  */
 function median(arr) {

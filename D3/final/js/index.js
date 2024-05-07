@@ -11,7 +11,7 @@ const mainInnerHeight = mainSize.height - margin.top - margin.bottom
 // GDP SVG
 let gdpSvg = d3.select(".gdp-svg")
 let gdpSize = {width: gdpSvg.attr('width'), height: gdpSvg.attr('height')}
-const gdpMargin = ({top: 30, right: 50, bottom: 80, left: 120})
+const gdpMargin = ({top: 30, right: 50, bottom: 80, left: 160})
 const gdpInnerWidth = gdpSize.width - gdpMargin.left - gdpMargin.right
 const gdpInnerHeight = gdpSize.height - gdpMargin.top - gdpMargin.bottom
 
@@ -42,35 +42,6 @@ async function main() {
     // const unemployment = await d3.csv("./../data/world_unemployment_data.csv")
     // const population = await d3.csv("./../data/world_population_data.csv")
     const economic = await d3.csv("./../data/world_economic_data.csv")
-
-    // 筛选数据
-    // let newTerr = terrorism.map(d => {
-    //     delete d["Code"];
-    //
-    //     return d
-    // })
-    // let newUnemp = unemployment.map(d => {
-    //     delete d["GDP (current US$)_y"];
-    //     delete d["GDP growth (annual %)_y"];
-    // })
-    // let newPop = population.map(d => {
-    //     delete d["rank"];
-    //     delete d["cca3"];
-    //     delete d["continent"];
-    //
-    //     return d;
-    // })
-    // let newEco = economic.map(d => {
-    //     delete d["GDP (current US$)_y"];
-    //     delete d["GDP growth (annual %)_y"];
-    //
-    //     return d;
-    // })
-    //
-    // console.log(newTerr)
-    // console.log(newUnemp)
-    // console.log(newPop)
-    // console.log(newEco)
 
     // ID -> NAME
     let worldDataMap = {};
@@ -209,6 +180,7 @@ async function main() {
             // 归一化
             .domain([0, d3.max(ecoInfoArr, d => d[1] / 1000000000000)])
             .range([0, gdpInnerWidth])
+            .nice()
         const yScale = d3.scaleBand()
             .domain(ecoInfoArr.map(d => d[0]))
             .range([0, gdpInnerHeight])
@@ -254,8 +226,7 @@ async function main() {
             })
 
         d3.selectAll('.tick text')
-            .attr('font-size', '16px')
-            .attr('font-weight', 'bold')
+            .attr('font-size', '1.5em')
 
         g.append('text').text('GDP (Trillion $)')
             .attr('font-size', '20px')
@@ -270,8 +241,9 @@ async function main() {
     let defs = mainSvg.append("defs")
     let linearGradient
 
-    // 渐变色图例
+    // 图例
     {
+        // 渐变色
         linearGradient = defs.append("linearGradient")
             .attr("id", "linearColor")
             .attr("x1", "0%")
@@ -284,10 +256,8 @@ async function main() {
         linearGradient.append("stop")
             .attr("offset", "100%")
             .style("stop-color", colorB.toString())
-    }
 
-    // 图例
-    {
+        // 图例矩形
         mainSvg.append("rect")
             .attr("x", 15)
             .attr("y", 200)

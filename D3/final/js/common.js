@@ -13,12 +13,21 @@ function to_map() {
 }
 
 /**
- *
- * @type {string}
+ * 动态改变年份
  */
 let selectYear = '2022'
-d3.selectAll('.year-selection').on('change', function () {
+let yearSelector = document.getElementById('year-selection')
+for (let i = 1960; i <= 2022; i++) {
+    yearSelector.options.add(new Option(i.toString(), i.toString()))
+}
+d3.selectAll('#year-selection').on('change', function () {
     selectYear = this.value
+})
 
-    console.log('selectYear -> ', selectYear)
+/**
+ * 动态选择国家
+ */
+let selectCountry = 'China'
+d3.selectAll('.country-selection').on('change', function () {
+    selectCountry = this.value
 })
