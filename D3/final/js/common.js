@@ -16,13 +16,31 @@ function to_map() {
  * 动态改变年份
  */
 let selectYear = '2022'
-let yearSelector = document.getElementById('year-selection')
+let yearSelector = document.getElementById('mask')
 for (let i = 1960; i <= 2022; i++) {
-    yearSelector.options.add(new Option(i.toString(), i.toString()))
+    let div = document.createElement('div');
+    div.textContent = i.toString();
+    div.classList.add('year-option');
+    div.addEventListener('mouseover', function () {
+        this.style.transition = 'all 1s'
+        this.style.backgroundColor = '#e3007c'
+        this.style.color = '#ffffff'
+    })
+    div.addEventListener('mouseout', function () {
+        this.style.transition = 'all 1s'
+        this.style.backgroundColor = '#ffffff'
+        this.style.color = '#000000'
+    })
+    div.addEventListener('click', function () {
+        selectYear = this.textContent;
+
+        let yearSelectBtn = document.getElementById('year-select-btn')
+        yearSelectBtn.textContent = selectYear
+
+        display_selection()
+    });
+    yearSelector.appendChild(div);
 }
-d3.selectAll('#year-selection').on('change', function () {
-    selectYear = this.value
-})
 
 /**
  * 动态选择国家
@@ -31,3 +49,25 @@ let selectCountry = 'China'
 d3.selectAll('.country-selection').on('change', function () {
     selectCountry = this.value
 })
+
+/**
+ * 显示年份选择框
+ */
+function display_selection() {
+    let mask = document.getElementById('mask')
+    let isShow = mask.style.display === 'flex'
+
+    if (isShow) {
+        mask.style.transition = 'all 1s'
+        mask.style.opacity = '0'
+        setTimeout(() => {
+            mask.style.display = 'none'
+        }, 1000)
+    } else {
+        mask.style.transition = 'all 1s'
+        mask.style.display = 'flex'
+        mask.style.flexDirection = 'column'
+        mask.offsetHeight;
+        mask.style.opacity = '1'
+    }
+}

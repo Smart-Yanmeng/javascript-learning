@@ -9,22 +9,81 @@
     <link rel="stylesheet" href="./../css/common.css">
 </head>
 <body>
+<!--<div class="body-container">-->
+<!--    <div class="map border">-->
+<!--&lt;!&ndash;        <svg id="more-data" class="border"></svg>&ndash;&gt;-->
+<!--        <svg id="rising-data" class="border"></svg>-->
+<!--    </div>-->
+<!--    <div class="void border"></div>-->
+<!--    <div class="info">-->
+<!--        <div id="more-title" class="up title1 border">标题</div>-->
+<!--        <div class="mid border">-->
+<!--            <div class="left border">-->
+<!--                <div class="more-date-select border">数据选择框</div>-->
+<!--                <div class="create-more-data border btn">生成数据按钮</div>-->
+<!--                <div class="analyse-data border btn">数据分析按钮</div>-->
+<!--                <div class="back-to-map border btn" onclick="to_map()">返回大地图</div>-->
+<!--            </div>-->
+<!--            <div class="summary border">统计框</div>-->
+<!--        </div>-->
+<!--        <div class="footer border">尾注</div>-->
+<!--    </div>-->
+<!--</div>-->
+
 <div class="body-container">
-    <div class="map border">
-<!--        <svg id="more-data" class="border"></svg>-->
+    <div class="map">
         <svg id="rising-data" class="border"></svg>
     </div>
+    <div class="void border"></div>
     <div class="info">
-        <div id="more-title" class="up title1 border">标题</div>
+        <div id="more-title" class="up title1 border">TITLE</div>
+
+        <!-- MID -->
         <div class="mid border">
-            <div class="left border">
-                <div class="more-date-select border">数据选择框</div>
-                <div class="create-more-data border btn">生成数据按钮</div>
-                <div class="analyse-data border btn">数据分析按钮</div>
-                <div class="back-to-map border btn" onclick="to_map()">返回大地图</div>
+            <!-- MID-TOP -->
+            <div class="mid-top down-border-pink up-border-pink">
+                <div class="left border">
+                    <div class="data border">
+                        <div class="date-select border">
+                            <button class="meet" onclick="">选择数据</button>
+                            <!--                            <form class="text-20-bold form1w">请选择年份:&nbsp&nbsp-->
+                            <!--                                <select id="year-selection"></select>-->
+                            <!--                            </form>-->
+                        </div>
+                        <div class="create-data border">
+                            <button class="meet" onclick="">生成数据</button>
+                        </div>
+                        <div class="more border">
+                            <button class="meet" onclick="">数据分析</button>
+                        </div>
+                        <div class="more border">
+                            <button class="meet" onclick="to_map()">返回地图</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary border">
+                    <div class="summary-word-title text-20-bold border">qwq</div>
+<!--                    <div id="summary-word" class="border"></div>-->
+                </div>
             </div>
-            <div class="summary border">统计框</div>
+
+            <!-- MID-MID -->
+            <div class="summary down-border-pink border">
+<!--                <div class="summary border">统计框</div>-->
+                <div class="summary-svg border">
+                    <svg class="gdp-svg" width="900" height="400"></svg>
+                </div>
+            </div>
+
+            <!-- MID-DOWN -->
+            <div class="mid-down down-border-pink inline-80">
+                <div id="select-gdp-data" class="text-20-bold border">You can select the rectangle to see the
+                    GDP data :)
+                </div>
+            </div>
         </div>
+
+        <!-- FOOTER -->
         <div class="footer border">尾注</div>
     </div>
 </div>

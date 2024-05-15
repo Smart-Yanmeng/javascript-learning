@@ -8,9 +8,8 @@
     margin: 0;
 }
 
-
 .border {
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     box-sizing: border-box;
 }
 
@@ -30,6 +29,10 @@
     line-height: 100px;
 }
 
+.inline-80 {
+    line-height: 80px;
+}
+
 .btn {
     width: 100%;
     height: 100px;
@@ -44,7 +47,6 @@
     font-size: 30px;
     font-weight: bold;
 }
-
 
 .content {
     width: 100%;
@@ -68,4 +70,87 @@ form option {
     height: 40px;
 
     text-align: center;
+}
+
+button {
+    background: none;
+    border: 0;
+    box-sizing: border-box;
+    padding: 0.5em 2em;
+    font-size: inherit;
+    font-weight: 700;
+    position: relative;
+    vertical-align: middle;
+}
+
+button::before, button::after {
+    box-sizing: inherit;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+.down-border-pink {
+    border-bottom: 5px solid #e3007c;
+}
+
+.up-border-pink {
+    border-top: 5px solid #e3007c;
+}
+
+.meet {
+    transition: color 0.25s;
+}
+.meet::before, .meet::after {
+    border: 4px solid transparent;
+    width: 0;
+    height: 0;
+}
+.meet::before {
+    top: 0;
+    left: 0;
+}
+.meet::after {
+    bottom: 0;
+    right: 0;
+}
+
+.meet:hover::before, .meet:hover::after {
+    width: 100%;
+    height: 100%;
+}
+
+.meet:hover {
+    color: #e3007c;
+}
+.meet::after {
+    top: 0;
+    left: 0;
+}
+.meet:hover::before {
+    border-top-color: #e3007c;
+    border-right-color: #e3007c;
+    transition: width 0.25s ease-out, height 0.25s ease-out 0.25s;
+}
+.meet:hover::after {
+    border-bottom-color: #e3007c;
+    border-left-color: #e3007c;
+    transition: height 0.25s ease-out, width 0.25s ease-out 0.25s;
+}
+
+body {
+    background: #fefefe;
+    color: #4b507a;
+    font: 300 bold 16px/1.5 Lato, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    font-weight: 300;
+    /*font-size: 2.5em;*/
 }

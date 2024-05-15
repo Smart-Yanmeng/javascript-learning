@@ -42,27 +42,57 @@ body {
 .info .mid {
     height: 700px;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.info .mid .mid-top {
+    width: 900px;
+    height: 300px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 /**************/
 /* 数据操控板块 */
 /**************/
 .info .mid .left {
-    width: 300px;
+    width: 200px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
 }
 
 .info .mid .left .data {
+    width: 450px;
     height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+#mask {
+    position: absolute;
+    display: none;
+    opacity: 0;
+    background-color: white;
+    left: 1170px;
+    width: 200px;
+    height: 200px;
+    overflow: scroll;
+}
+
+.year-option {
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
 }
 
 /* index.html */
-.info .mid .left .date-select {
-    height: 100px;
-}
-
 .info .mid .left .date-select .form1w {
     width: 100%;
     height: 100%;
@@ -76,31 +106,43 @@ body {
 
 /* index.html */
 .info .mid .left .create-data {
-    height: 100px;
-    line-height: 100px;
+    /*height: 100px;*/
+    /*line-height: 100px;*/
 }
 
 /* index.html */
 .info .mid .left .more {
-    height: 100px;
+    /*height: 100px;*/
 }
 
 .info .mid .summary {
-    width: 600px;
+    width: 100%;
 }
 
-.info .mid .summary .summary-word {
-    height: 200px;
+.info .mid .summary .summary-word-title {
+    height: 50px;
     text-align: center;
-    line-height: 100px;
+    line-height: 50px;
+}
+
+.info .mid .summary #summary-word {
+    height: 150px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.info .mid .summary #summary-word :hover {
+    color: #FF0000;
+
+    transition-duration: 100ms;
 }
 
 .info .mid .summary .summary-svg {
     height: 400px;
 }
 
-.info .mid .summary .summary-svg #select-gdp-data {
-    height: 100px;
+.info .mid .mid-down #select-gdp-data {
+    height: 80px;
 }
 
 /*.info .footer {*/

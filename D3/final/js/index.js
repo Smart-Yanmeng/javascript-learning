@@ -72,6 +72,17 @@ async function main() {
     // NAME -> GDP
     let ecoInfoArr = selectEco.map(d => ([d['Country Name'], d['GDP (current US$)_x']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
 
+    // 显示在页面上
+    {
+        document.getElementById('summary-word').innerHTML = `
+            <p>${ecoInfoArr[0][0]}: ${ecoInfoArr[0][1]}</p>
+            <p>${ecoInfoArr[1][0]}: ${ecoInfoArr[1][1]}</p>
+            <p>${ecoInfoArr[2][0]}: ${ecoInfoArr[2][1]}</p>
+            <p>${ecoInfoArr[3][0]}: ${ecoInfoArr[3][1]}</p>
+            <p>${ecoInfoArr[4][0]}: ${ecoInfoArr[4][1]}</p>
+        `
+    }
+
     console.log("selectEco -> ", selectEco)
     console.log("ecoArr -> ", ecoArr)
     console.log("ecoInfoArr -> ", ecoInfoArr)
@@ -315,4 +326,4 @@ async function main() {
 }
 
 // Main 函数
-main().then(r => console.log('done'));
+main().then(_ => console.log('done'));
