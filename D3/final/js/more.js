@@ -265,6 +265,8 @@ async function main() {
         })
         .filter(d => !isNaN(d['id']))
 
+    let ecoGrowInfoArr = selectEco.map(d => ([d['year'], d['growth']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
+
     // 筛选出中国的人口大小数据
     let popCountry = popData
         .filter(d => d['country'] === 'China')

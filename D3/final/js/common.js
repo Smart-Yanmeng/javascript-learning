@@ -2,14 +2,14 @@
  * 跳转到 More 页面
  */
 function to_more() {
-    window.open('./../html/more.html', '_blank');
+    window.open('./../html/more.html', '_self');
 }
 
 /**
  * 跳转到 Map 页面
  */
 function to_map() {
-    window.open('./../html/index.html', '_blank');
+    window.open('./../html/index.html', '_self');
 }
 
 /**
