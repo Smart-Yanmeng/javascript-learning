@@ -23,6 +23,12 @@ let risingSvg = d3.select('#rising-data')
     .attr('width', size.width)
     .attr('height', size.height)
 
+let ecoGrowSvg = d3.select('.pop-svg')
+let ecoGrowSize = {width: ecoGrowSvg.attr('width'), height: ecoGrowSvg.attr('height')}
+const ecoGrowMargin = ({top: 30, right: 50, bottom: 80, left: 160})
+const ecoGrowInnerWidth = ecoGrowSize.width - ecoGrowMargin.left - ecoGrowMargin.right
+const ecoGrowInnerHeight = ecoGrowSize.height - ecoGrowMargin.top - ecoGrowMargin.bottom
+
 const risingXValue = (datum) => {
     return +datum['year']
 }
@@ -226,6 +232,68 @@ const risingData = function (data) {
     }
 }
 
+// 绘制条形统计图
+const ecoGrowData = function (data) {
+    const ecoGrowXScale = d3.scaleLinear()
+        // 归一化
+        .domain([0, d3.max(data, d => d[1])])
+        .range([0, ecoGrowInnerWidth])
+        .nice()
+    const ecoGrowYScale = d3.scaleBand()
+        .domain(data.map(d => d[0]))
+        .range([0, ecoGrowInnerHeight])
+        .padding(0.2)
+
+    const g = ecoGrowSvg.append('g')
+        .attr('id', 'ecoGrowGroup')
+        .attr('transform', `translate(${ecoGrowMargin.left}, ${ecoGrowMargin.top})`)
+
+    const ecoGrowXAxis = d3.axisBottom(ecoGrowXScale)
+    const ecoGrowYAxis = d3.axisLeft(ecoGrowYScale)
+
+    g.append('g')
+        .call(ecoGrowXAxis).attr('transform', `translate(0, ${ecoGrowInnerHeight})`)
+        .attr('id', 'xAxis')
+    g.append('g').call(ecoGrowYAxis)
+
+    // 绘制矩形
+    data.forEach(d => {
+        g.append('rect')
+            .attr('y', ecoGrowYScale(d[0]))
+            .attr('width', ecoGrowXScale(d[1]))
+            .attr('height', ecoGrowYScale.bandwidth())
+            .attr('fill', 'green')
+            .attr('opacity', '0.7')
+            .attr('gdp-growth', d[1])
+    })
+
+    // 交互
+    d3.selectAll('#ecoGrowGroup rect')
+        .on('mouseover', function () {
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .attr('fill', 'red')
+            document.getElementById('select-gdp-growth-data').innerText = 'GDP Growth Rate: ' + d3.select(this).attr('gdp-growth')
+        })
+        .on('mouseout', function () {
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .attr('fill', 'green')
+            document.getElementById('select-gdp-growth-data').innerText = 'You can select the rectangle to see the GDP data :)'
+        })
+
+    d3.selectAll('.tick text')
+        .attr('font-size', '2em')
+
+    g.append('text').text('GDP growth (%)')
+        .attr('font-size', '26px')
+        .attr('font-weight', 'bold')
+        .attr('transform', `translate(${ecoGrowInnerWidth / 2}, ${ecoGrowInnerHeight + 50})`)
+        .attr('text-anchor', 'middle')
+}
+
 async function main() {
     // 读入数据
     const countryCode = await d3.json("./../data/world-110m-country-codes.json")
@@ -266,6 +334,17 @@ async function main() {
         .filter(d => !isNaN(d['id']))
 
     let ecoGrowInfoArr = selectEco.map(d => ([d['year'], d['growth']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
+
+    // 显示在页面上
+    {
+        document.getElementById('summary-gdp-growth').innerHTML = `
+            <p>${ecoGrowInfoArr[0][0]}: ${ecoGrowInfoArr[0][1]}</p>
+            <p>${ecoGrowInfoArr[1][0]}: ${ecoGrowInfoArr[1][1]}</p>
+            <p>${ecoGrowInfoArr[2][0]}: ${ecoGrowInfoArr[2][1]}</p>
+            <p>${ecoGrowInfoArr[3][0]}: ${ecoGrowInfoArr[3][1]}</p>
+            <p>${ecoGrowInfoArr[4][0]}: ${ecoGrowInfoArr[4][1]}</p>
+        `
+    }
 
     // 筛选出中国的人口大小数据
     let popCountry = popData
@@ -312,6 +391,7 @@ async function main() {
     /********/
     moreData(popCountry)
     risingData(selectEco)
+    ecoGrowData(ecoGrowInfoArr)
 
     console.log(moreXValue(popData[0]))
 }

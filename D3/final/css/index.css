@@ -77,8 +77,8 @@ body {
     display: none;
     opacity: 0;
     background-color: white;
-    left: 1170px;
-    width: 200px;
+    left: 1150px;
+    width: 100px;
     height: 200px;
     overflow: scroll;
 }
@@ -120,11 +120,12 @@ body {
 }
 
 .info .mid .summary .summary-word-title {
-    height: 50px;
+    height: 45px;
     text-align: center;
     line-height: 50px;
 }
 
+/* index.html */
 .info .mid .summary #summary-word {
     height: 150px;
     text-align: center;
@@ -133,8 +134,19 @@ body {
 
 .info .mid .summary #summary-word :hover {
     color: #FF0000;
+    font-weight: bold;
+}
 
-    transition-duration: 100ms;
+/* more.html */
+.info .mid .summary #summary-gdp-growth {
+    height: 150px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.info .mid .summary #summary-gdp-growth :hover {
+    color: #FF0000;
+    font-weight: bold;
 }
 
 .info .mid .summary .summary-svg {

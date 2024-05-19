@@ -210,14 +210,18 @@ async function main() {
         g.append('g').call(yAxis)
 
         // 绘制矩形
-        ecoInfoArr.forEach(d => {
+        ecoInfoArr.forEach((d, i) => {
             g.append('rect')
                 .attr('y', yScale(d[0]))
-                .attr('width', xScale(d[1] / 1000000000000))
+                .attr('width', 0)
                 .attr('height', yScale.bandwidth())
-                .attr('fill', 'green')
+                .style('fill', 'green')
                 .attr('opacity', '0.7')
                 .attr('gdp', d[1])
+                .transition()
+                .duration(1000)
+                .delay(i * 400)
+                .attr('width', xScale(d[1] / 1000000000000));
         })
 
         d3.selectAll('#mainGroup rect')
@@ -225,22 +229,22 @@ async function main() {
                 d3.select(this)
                     .transition()
                     .duration(500)
-                    .attr('fill', 'red')
+                    .style('fill', 'red')
                 document.getElementById('select-gdp-data').innerText = 'GDP: ' + d3.select(this).attr('gdp')
             })
             .on('mouseout', function () {
                 d3.select(this)
                     .transition()
                     .duration(500)
-                    .attr('fill', 'green')
+                    .style('fill', 'green')
                 document.getElementById('select-gdp-data').innerText = 'You can select the rectangle to see the GDP data :)'
             })
 
         d3.selectAll('.tick text')
-            .attr('font-size', '1.5em')
+            .attr('font-size', '2em')
 
         g.append('text').text('GDP (Trillion $)')
-            .attr('font-size', '20px')
+            .attr('font-size', '26px')
             .attr('font-weight', 'bold')
             .attr('transform', `translate(${gdpInnerWidth / 2}, ${gdpInnerHeight + 50})`)
             .attr('text-anchor', 'middle')
