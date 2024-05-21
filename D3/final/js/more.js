@@ -257,31 +257,42 @@ const ecoGrowData = function (data) {
     g.append('g').call(ecoGrowYAxis)
 
     // 绘制矩形
-    data.forEach(d => {
+    data.forEach((d, i) => {
         g.append('rect')
             .attr('y', ecoGrowYScale(d[0]))
-            .attr('width', ecoGrowXScale(d[1]))
+            .attr('width', 0)
             .attr('height', ecoGrowYScale.bandwidth())
             .attr('fill', 'green')
             .attr('opacity', '0.7')
             .attr('gdp-growth', d[1])
+            .transition()
+            .duration(1000)
+            .delay(i * 400)
+            .attr('width', ecoGrowXScale(d[1]))
+            .on('end', function () {
+                d3.select(this).attr('animated', true); // 标记动画已完成
+            });
     })
 
     // 交互
     d3.selectAll('#ecoGrowGroup rect')
         .on('mouseover', function () {
-            d3.select(this)
-                .transition()
-                .duration(500)
-                .attr('fill', 'red')
-            document.getElementById('select-gdp-growth-data').innerText = 'GDP Growth Rate: ' + d3.select(this).attr('gdp-growth')
+            if (d3.select(this).attr('animated') === 'true') {
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .attr('fill', 'red');
+                document.getElementById('select-gdp-growth-data').innerText = 'GDP Growth Rate: ' + d3.select(this).attr('gdp-growth') + '%';
+            }
         })
         .on('mouseout', function () {
-            d3.select(this)
-                .transition()
-                .duration(500)
-                .attr('fill', 'green')
-            document.getElementById('select-gdp-growth-data').innerText = 'You can select the rectangle to see the GDP data :)'
+            if (d3.select(this).attr('animated') === 'true') {
+                d3.select(this)
+                    .transition()
+                    .duration(500)
+                    .attr('fill', 'green');
+                document.getElementById('select-gdp-growth-data').innerText = 'You can select the rectangle to see the GDP data :)';
+            }
         })
 
     d3.selectAll('.tick text')

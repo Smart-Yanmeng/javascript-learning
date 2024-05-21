@@ -163,6 +163,13 @@ async function main() {
 
                 return colorScale(linearScale(Math.sqrt(gdpData)))
             })
+            .attr('opacity', 0)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr('opacity', 1);
+
+        countryShape.selectAll('path')
             .on('mouseover', function () {
                 d3.select(this)
                     .attr('opacity', 0.5)
@@ -221,23 +228,30 @@ async function main() {
                 .transition()
                 .duration(1000)
                 .delay(i * 400)
-                .attr('width', xScale(d[1] / 1000000000000));
+                .attr('width', xScale(d[1] / 1000000000000))
+                .on('end', function () {
+                    d3.select(this).attr('animated', true);
+                });
         })
 
         d3.selectAll('#mainGroup rect')
             .on('mouseover', function () {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .style('fill', 'red')
-                document.getElementById('select-gdp-data').innerText = 'GDP: ' + d3.select(this).attr('gdp')
+                if (d3.select(this).attr('animated') === 'true') {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .style('fill', 'red');
+                    document.getElementById('select-gdp-data').innerText = 'GDP: ' + d3.select(this).attr('gdp') + '$';
+                }
             })
             .on('mouseout', function () {
-                d3.select(this)
-                    .transition()
-                    .duration(500)
-                    .style('fill', 'green')
-                document.getElementById('select-gdp-data').innerText = 'You can select the rectangle to see the GDP data :)'
+                if (d3.select(this).attr('animated') === 'true') {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .style('fill', 'green');
+                    document.getElementById('select-gdp-data').innerText = 'You can select the rectangle to see the GDP data :)';
+                }
             })
 
         d3.selectAll('.tick text')
@@ -279,14 +293,24 @@ async function main() {
             .attr("width", 100)
             .attr("height", 20)
             .attr("id", "dataRect")
-            .style("fill", "url(#" + linearGradient.attr("id") + ")");
+            .style("fill", "url(#" + linearGradient.attr("id") + ")")
+            .attr('opacity', 0)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr('opacity', 1);
         mainSvg.append("rect")
             .attr("x", 15)
             .attr("y", 200)
             .attr("width", 100)
             .attr("height", 20)
             .attr("id", "noDataRect")
-            .style("fill", "gray");
+            .style("fill", "gray")
+            .attr('opacity', 0)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr('opacity', 1);
 
         // 图例文字
         mainSvg.append("text")
@@ -297,7 +321,12 @@ async function main() {
             .style("font-size", "14px")
             .style("font-style", "italic")
             .style("font-weight", "bold")
-            .style("fill", colorA);
+            .style("fill", colorA)
+            .attr('opacity', 0)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr('opacity', 1);
         mainSvg.append("text")
             .attr("x", 15)
             .attr("y", 230)
@@ -306,7 +335,12 @@ async function main() {
             .style("font-size", "14px")
             .style("font-style", "italic")
             .style("font-weight", "bold")
-            .style("fill", colorB);
+            .style("fill", colorB)
+            .attr('opacity', 0)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr('opacity', 1);
         mainSvg.append("text")
             .attr("x", 15)
             .attr("y", 230)
@@ -315,7 +349,12 @@ async function main() {
             .style("font-size", "14px")
             .style("font-style", "italic")
             .style("font-weight", "bold")
-            .style("fill", "gray");
+            .style("fill", "gray")
+            .attr('opacity', 0)
+            .transition()
+            .duration(2000)
+            .ease(d3.easeCircleOut)
+            .attr('opacity', 1);
 
         // 图例形状
         d3.select("#dataRect")
