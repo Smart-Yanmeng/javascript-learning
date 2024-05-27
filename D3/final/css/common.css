@@ -8,6 +8,22 @@
     margin: 0;
 }
 
+body {
+    background: #fefefe;
+    color: #4b507a;
+    font: 300 bold 16px/1.5 Lato, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    font-weight: 300;
+    /*font-size: 2.5em;*/
+}
+
+div::-webkit-scrollbar {
+    width: 0 !important
+}
+
 .border {
     /*border: 1px solid black;*/
     box-sizing: border-box;
@@ -21,6 +37,12 @@
 
 .text-20-bold {
     font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.text-30-bold {
+    font-size: 30px;
     font-weight: bold;
     text-align: center;
 }
@@ -95,12 +117,21 @@ div {
     box-sizing: border-box;
 }
 
-.down-border-pink {
-    border-bottom: 5px solid #e3007c;
+.border-pink {
+    height: 10px;
+    background-color: #e3007c;
+    transform-origin: right;
+
+    animation: Expand 1s ease-in-out forwards;
 }
 
-.up-border-pink {
-    border-top: 5px solid #e3007c;
+@keyframes Expand {
+    from {
+        width: 0;
+    }
+    to {
+        width: 900px;
+    }
 }
 
 .meet {
@@ -141,20 +172,4 @@ div {
     border-bottom-color: #e3007c;
     border-left-color: #e3007c;
     transition: height 0.25s ease-out, width 0.25s ease-out 0.25s;
-}
-
-body {
-    background: #fefefe;
-    color: #4b507a;
-    font: 300 bold 16px/1.5 Lato, sans-serif;
-    text-align: center;
-}
-
-h1 {
-    font-weight: 300;
-    /*font-size: 2.5em;*/
-}
-
-div::-webkit-scrollbar {
-    width: 0 !important
 }

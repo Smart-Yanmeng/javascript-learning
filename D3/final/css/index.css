@@ -48,7 +48,7 @@ body {
 
 .info .mid .mid-top {
     width: 900px;
-    height: 300px;
+    height: 180px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -66,7 +66,7 @@ body {
 
 .info .mid .left .data {
     width: 450px;
-    height: 200px;
+    height: 180px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -78,8 +78,9 @@ body {
     opacity: 0;
     background-color: white;
     left: 1150px;
+    top: 160px;
     width: 100px;
-    height: 200px;
+    height: 175px;
     overflow: scroll;
 }
 
@@ -105,31 +106,21 @@ body {
 }
 
 /* index.html */
-.info .mid .left .create-data {
-    /*height: 100px;*/
-    /*line-height: 100px;*/
-}
-
-/* index.html */
-.info .mid .left .more {
-    /*height: 100px;*/
-}
-
 .info .mid .summary {
     width: 100%;
 }
 
 .info .mid .summary .summary-word-title {
-    height: 45px;
+    height: 40px;
     text-align: center;
-    line-height: 50px;
+    line-height: 40px;
 }
 
 /* index.html */
 .info .mid .summary #summary-word {
-    height: 150px;
+    height: 140px;
     text-align: center;
-    line-height: 30px;
+    line-height: 28px;
 }
 
 .info .mid .summary #summary-word :hover {
@@ -139,9 +130,9 @@ body {
 
 /* more.html */
 .info .mid .summary #summary-gdp-growth {
-    height: 150px;
+    height: 140px;
     text-align: center;
-    line-height: 30px;
+    line-height: 28px;
 }
 
 .info .mid .summary #summary-gdp-growth :hover {
@@ -150,7 +141,7 @@ body {
 }
 
 .info .mid .summary .summary-svg {
-    height: 400px;
+    height: 390px;
 }
 
 .info .mid .mid-down #select-gdp-data {
