@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="d3.v7" level="application" />
     <orderEntry type="library" name="d3-queue.v3" level="application" />
+    <orderEntry type="library" name="xlsx" level="application" />
   </component>
 </module>

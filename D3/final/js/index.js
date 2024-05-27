@@ -163,20 +163,20 @@ async function main() {
 
                 return colorScale(linearScale(Math.sqrt(gdpData)))
             })
-            .attr('opacity', 0)
-            .transition()
-            .duration(2000)
-            .ease(d3.easeCircleOut)
-            .attr('opacity', 1);
 
         countryShape.selectAll('path')
             .on('mouseover', function () {
                 d3.select(this)
                     .attr('opacity', 0.5)
+
+                let ecoData = selectEco.find(d => d['id'] === +this.id)
+                document.getElementById('select-gdp-data').innerText = !ecoData ?
+                    "No data :(" : 'GDP Growth Rate: ' + ecoData['GDP (current US$)_x'].toString() + '%'
             })
             .on('mouseout', function () {
                 d3.select(this)
                     .attr('opacity', 1)
+                document.getElementById('select-gdp-data').innerText = 'You can select the rectangle to see the GDP data :)'
             })
             .on('click', function () {
                 console.log(worldDataMap[+this.id])

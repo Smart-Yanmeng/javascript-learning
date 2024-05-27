@@ -1,4 +1,4 @@
-let margin = ({top: 170, right: 130, bottom: 120, left: 120});
+let margin = ({top: 170, right: 130, bottom: 90, left: 90});
 let size = {width: 900, height: 900};
 const innerWidth = size.width - margin.left - margin.right;
 const innerHeight = size.height - margin.top - margin.bottom;
@@ -23,6 +23,7 @@ let risingSvg = d3.select('#rising-data')
     .attr('width', size.width)
     .attr('height', size.height)
 
+// ECO GROW SVG
 let ecoGrowSvg = d3.select('.pop-svg')
 let ecoGrowSize = {width: ecoGrowSvg.attr('width'), height: ecoGrowSvg.attr('height')}
 const ecoGrowMargin = ({top: 30, right: 50, bottom: 80, left: 160})
@@ -37,6 +38,26 @@ const risingYGdpValue = (datum) => {
 }
 const risingYGdpRisingValue = (datum) => {
     return +datum['growth']
+}
+
+/**
+ * 初始化 SVG 图片，防止 append 多次叠加
+ */
+function moreInit() {
+    moreSvg.selectAll('g').remove();
+    moreSvg.selectAll('rect').remove();
+    moreSvg.selectAll('text').remove();
+    moreSvg.selectAll('defs').remove();
+
+    risingSvg.selectAll('g').remove();
+    risingSvg.selectAll('rect').remove();
+    risingSvg.selectAll('text').remove();
+    risingSvg.selectAll('path').remove();
+
+    ecoGrowSvg.selectAll('g').remove();
+    ecoGrowSvg.selectAll('rect').remove();
+    ecoGrowSvg.selectAll('text').remove();
+    ecoGrowSvg.selectAll('path').remove();
 }
 
 /**
@@ -69,9 +90,6 @@ const moreData = function (data) {
         .attr('transform', `translate(0, ${innerHeight})`)
     const moreYAxisG = g.append('g')
         .call(moreYAxis)
-
-    g.selectAll('.tick text')
-        .attr('font-size', '2em')
 
     g.append('path')
         .attr('id', 'alterPath')
@@ -124,6 +142,7 @@ const risingData = function (data) {
     {
         g.append('g')
             .call(risingXAxis)
+            .attr('id', 'rising-x-axis')
             .attr('transform', `translate(0, ${innerHeight})`)
         g.append('g')
             .call(risingGdpYAxis)
@@ -134,19 +153,49 @@ const risingData = function (data) {
 
     // 画条形图
     {
-        data.forEach(d => {
+        data.forEach((d, i) => {
             g.append('rect')
-                .attr('x', risingXScale(risingXValue(d)))
+                .attr('x', risingXScale(risingXValue(d)) - 2)
                 .attr('y', risingGdpYScale(risingYGdpValue(d)))
                 .attr('width', '5')
-                .attr('height', innerHeight - risingGdpYScale(risingYGdpValue(d)))
+                .attr('height', 0)
                 .attr('fill', 'green')
                 .attr('opacity', '0.7')
                 .attr('gdp', risingYGdpValue(d))
+                .attr('year', 1960 + i)
+                .transition()
+                .duration(2000)
+                .delay(i * 50)
+                .attr('height', innerHeight - risingGdpYScale(risingYGdpValue(d)))
+                .on('end', function () {
+                    d3.select(this).attr('animated', true); // 标记动画已完成
+                })
         })
 
-        g.selectAll('.tick text')
-            .attr('font-size', '1.5em')
+        d3.selectAll('#risingGroup rect')
+            .on('mouseover', function () {
+                if (d3.select(this).attr('animated') === 'true') {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .attr('width', '8')
+                        .attr('fill', 'red');
+                    console.log(this)
+                    document.getElementById('select-gdp-growth-data').innerText =
+                        'GDP in ' + d3.select(this).attr('year') + ': ' + d3.select(this).attr('gdp') + ' trillion $';
+                }
+            })
+            .on('mouseout', function () {
+                if (d3.select(this).attr('animated') === 'true') {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .attr('width', '5')
+                        .attr('fill', 'green');
+                    document.getElementById('select-gdp-growth-data').innerText =
+                        'You can select the rectangle to see the GDP data :)';
+                }
+            })
 
         g.append('path')
             .attr('id', 'alterPath')
@@ -196,6 +245,8 @@ const risingData = function (data) {
 
     // 添加标题
     {
+        document.getElementById('more-title').innerText = 'GDP and GDP growth in ' + selectCountry
+
         g.append('text')
             .attr('x', 0)
             .attr('y', -70)
@@ -205,7 +256,7 @@ const risingData = function (data) {
         g.append('text')
             .attr('x', 0)
             .attr('y', -40)
-            .text('in China')
+            .text('in ' + selectCountry)
             .attr('font-size', '1.2em')
 
         g.append('text')
@@ -271,7 +322,7 @@ const ecoGrowData = function (data) {
             .attr('width', ecoGrowXScale(d[1]))
             .on('end', function () {
                 d3.select(this).attr('animated', true); // 标记动画已完成
-            });
+            })
     })
 
     // 交互
@@ -296,7 +347,7 @@ const ecoGrowData = function (data) {
         })
 
     d3.selectAll('.tick text')
-        .attr('font-size', '2em')
+        .attr('font-size', '1.8em')
 
     g.append('text').text('GDP growth (%)')
         .attr('font-size', '26px')
@@ -305,7 +356,10 @@ const ecoGrowData = function (data) {
         .attr('text-anchor', 'middle')
 }
 
-async function main() {
+/**
+ * 程序主函数
+ */
+async function more_main() {
     // 读入数据
     const countryCode = await d3.json("./../data/world-110m-country-codes.json")
     const population = await d3.csv("./../data/world_population_data.csv")
@@ -330,9 +384,12 @@ async function main() {
     console.log("popData -> ", popData)
     console.log("worldDataMap -> ", worldDataMap)
 
+    // 全局世界列表
+    window.worldList = Object.entries(worldDataMap).map(([_, value]) => value);
+
     // 筛选出选择的国家的 GDP 总值数据
     let selectEco = economic
-        .filter(d => d['Country Name'] === 'China')
+        .filter(d => d['Country Name'] === selectCountry)
         .filter(d => d['GDP (current US$)_x'] !== '')
         .map(d => {
             return {
@@ -345,6 +402,22 @@ async function main() {
         .filter(d => !isNaN(d['id']))
 
     let ecoGrowInfoArr = selectEco.map(d => ([d['year'], d['growth']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
+
+    console.log(ecoGrowInfoArr)
+    if (!ecoGrowInfoArr[0]) {
+        console.log('error!')
+        alert('这个国家没有您想要的数据，即将回到中国！')
+        selectCountry = 'China'
+        document.getElementById('country-select-btn').textContent = selectCountry
+        more_main().then(_ => {
+            console.log('Flash to China !')
+        })
+    } else {
+        console.log('yes!')
+    }
+
+    // 初始化
+    moreInit()
 
     // 显示在页面上
     {
@@ -359,7 +432,7 @@ async function main() {
 
     // 筛选出中国的人口大小数据
     let popCountry = popData
-        .filter(d => d['country'] === 'China')
+        .filter(d => d['country'] === selectCountry)
         .map(d => {
             return {
                 'year': d['year'],
@@ -377,24 +450,24 @@ async function main() {
 
     // 错误数据检测
     {
-        let popError = 0
-        popArr.forEach((d) => {
-            if (d < 0) popError++
-        })
-
-        console.log("Population Error -> ", popError)
-
-        maxPopData = maxValue(popArr)
-        minPopData = minValue(popArr)
-        let avgPopData = average(popArr)
-        let stdPopData = standardDeviation(popArr)
-        let medianPopData = median(popArr)
-
-        console.log("Max Population Data in China -> ", maxPopData)
-        console.log("Min Population Data in China -> ", minPopData)
-        console.log("Average Population Data in China -> ", avgPopData)
-        console.log("Standard Deviation of Population Data in China -> ", stdPopData)
-        console.log("Median Population Data in China -> ", medianPopData)
+        // let popError = 0
+        // popArr.forEach((d) => {
+        //     if (d < 0) popError++
+        // })
+        //
+        // console.log("Population Error -> ", popError)
+        //
+        // maxPopData = maxValue(popArr)
+        // minPopData = minValue(popArr)
+        // let avgPopData = average(popArr)
+        // let stdPopData = standardDeviation(popArr)
+        // let medianPopData = median(popArr)
+        //
+        // console.log("Max Population Data in " + selectCountry + " -> ", maxPopData)
+        // console.log("Min Population Data in " + selectCountry + " -> ", minPopData)
+        // console.log("Average Population Data in " + selectCountry + " -> ", avgPopData)
+        // console.log("Standard Deviation of Population Data in " + selectCountry + " -> ", stdPopData)
+        // console.log("Median Population Data in " + selectCountry + " -> ", medianPopData)
     }
 
     /********/
@@ -407,4 +480,4 @@ async function main() {
     console.log(moreXValue(popData[0]))
 }
 
-main().then(() => console.log('done'))
+more_main().then(() => console.log('done'))

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./../css/common.css">
 </head>
 <body>
-<div class="body-container">
+<div class="body-container display-by-opacity">
     <div class="map">
         <svg class="map-svg border" width="900" height="900"></svg>
     </div>
@@ -25,10 +25,9 @@
                 <div class="left border">
                     <div class="data border">
                         <div class="date-select border">
-                            <button id="year-select-btn" class="meet year-mask-out" onclick="display_selection()">选择年份</button>
-                            <!--                            <form class="text-20-bold form1w">请选择年份:&nbsp&nbsp-->
-                            <!--                                <select id="year-selection"></select>-->
-                            <!--                            </form>-->
+                            <button id="year-select-btn" class="meet year-mask-out" onclick="display_year_selection()">
+                                选择年份
+                            </button>
                         </div>
                         <div class="create-data border">
                             <button class="meet" onclick="main()">生成数据</button>
@@ -39,7 +38,7 @@
                     </div>
                 </div>
 
-                <div id="mask" class="border year-mask-out"></div>
+                <div id="year-mask" isFirst="true" class="border year-mask-out"></div>
 
                 <div class="summary border">
                     <div class="summary-word-title text-20-bold border">Top 5 GDP country</div>
@@ -58,9 +57,7 @@
 
             <!-- MID-DOWN -->
             <div class="mid-down inline-80">
-                <div id="select-gdp-data" class="text-30-bold border">You can select the rectangle to see the
-                    GDP data :)
-                </div>
+                <div id="select-gdp-data" class="text-30-bold border">You can select to see the GDP data :)</div>
             </div>
             <div class="border-pink"></div>
         </div>

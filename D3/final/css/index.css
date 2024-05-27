@@ -72,7 +72,7 @@ body {
     justify-content: space-evenly;
 }
 
-#mask {
+#year-mask {
     position: absolute;
     display: none;
     opacity: 0;
@@ -84,7 +84,28 @@ body {
     overflow: scroll;
 }
 
+#country-mask {
+    position: absolute;
+    display: none;
+    opacity: 0;
+    background-color: white;
+    left: 1150px;
+    top: 160px;
+    width: 250px;
+    height: 175px;
+    overflow: scroll;
+}
+
 .year-option {
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
+}
+
+.country-option {
     width: 100%;
     height: 30px;
     line-height: 30px;
@@ -147,7 +168,3 @@ body {
 .info .mid .mid-down #select-gdp-data {
     height: 80px;
 }
-
-/*.info .footer {*/
-/*    height: 100px;*/
-/*}*/
