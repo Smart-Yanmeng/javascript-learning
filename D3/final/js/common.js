@@ -5,6 +5,9 @@ function to_more() {
     window.open('./../html/more.html', '_self');
 }
 
+/**
+ * 跳转到 Analysis 页面
+ */
 function to_analysis() {
     window.open('./../html/analysis.html', '_self')
 }
@@ -14,6 +17,13 @@ function to_analysis() {
  */
 function to_map() {
     window.open('./../html/index.html', '_self');
+}
+
+/**
+ * 跳转到 Entry 页面
+ */
+function to_entry() {
+    window.open('./../html/entry.html', '_self')
 }
 
 /**
