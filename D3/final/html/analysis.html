@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MORE INFO</title>
+    <title>DATA INFO</title>
     <script src="./../lib/d3.v7.min.js"></script>
     <script src="./../lib/topojson.js"></script>
     <link rel="stylesheet" href="./../css/index.css">
@@ -24,17 +24,17 @@
             <div class="mid-top">
                 <div class="left border">
                     <div class="data border">
-                        <div class="date-select border">
-                            <button id="country-select-btn" class="meet country-mask-out"
+                        <div class="data-select border">
+                            <button id="data-select-btn" class="meet country-mask-out"
                                     onclick="display_country_selection()">
-                                选择国家
+                                选择数据
                             </button>
                         </div>
                         <div class="create-data border">
                             <button class="meet" onclick="more_main()">生成数据</button>
                         </div>
                         <div class="more border">
-                            <button class="meet" onclick="to_analysis()">数据分析</button>
+                            <button class="meet" onclick="to_more()">返回更多</button>
                         </div>
                         <div class="more border">
                             <button class="meet" onclick="to_map()">返回地图</button>
@@ -53,6 +53,7 @@
 
             <!-- MID-MID -->
             <div class="summary border">
+                <!--                <div class="summary border">统计框</div>-->
                 <div class="summary-svg border">
                     <svg class="pop-svg" width="900" height="390"></svg>
                 </div>

@@ -5,6 +5,10 @@ function to_more() {
     window.open('./../html/more.html', '_self');
 }
 
+function to_analysis() {
+    window.open('./../html/analysis.html', '_self')
+}
+
 /**
  * 跳转到 Map 页面
  */
