@@ -3,20 +3,18 @@ let size = {width: 900, height: 900};
 const innerWidth = size.width - margin.left - margin.right;
 const innerHeight = size.height - margin.top - margin.bottom;
 
-let maxPopData, minPopData
-
 // MORE SVG
 let moreSvg = d3.select('#more-data')
     .attr('width', size.width)
     .attr('height', size.height)
 
-const moreXValue = (datum) => {
-    return +datum['year']
-}
-const moreYValue = (datum) => {
-    // 归一化
-    return (+datum['population'] - minPopData) / (maxPopData - minPopData)
-}
+// const moreXValue = (datum) => {
+//     return +datum['year']
+// }
+// const moreYValue = (datum) => {
+//     // 归一化
+//     return (+datum['population'] - minPopData) / (maxPopData - minPopData)
+// }
 
 // RISING SVG
 let risingSvg = d3.select('#rising-data')
@@ -61,65 +59,16 @@ function moreInit() {
 }
 
 /**
- * 折线图
- */
-const moreData = function (data) {
-    const moreXScale = d3.scaleLinear()
-        .domain(d3.extent(data, moreXValue))
-        .range([0, innerWidth])
-        .nice()
-
-    const moreYScale = d3.scaleLinear()
-        .domain(d3.extent(data, moreYValue))
-        .range([innerHeight, 0])
-        .nice()
-
-    const g = moreSvg.append('g')
-        .attr('transform', `translate(${margin.left}, ${margin.top})`)
-        .attr('id', 'mainGroup')
-
-    const moreXAxis = d3.axisBottom(moreXScale)
-        .tickPadding(10)
-        .ticks(10)
-    const moreYAxis = d3.axisLeft(moreYScale)
-        .ticks(20)
-        .tickPadding(10)
-
-    const moreXAxisG = g.append('g')
-        .call(moreXAxis)
-        .attr('transform', `translate(0, ${innerHeight})`)
-    const moreYAxisG = g.append('g')
-        .call(moreYAxis)
-
-    g.append('path')
-        .attr('id', 'alterPath')
-
-    const line = d3.line()
-        .x(d => moreXScale(moreXValue(d)))
-        .y(d => moreYScale(moreYValue(d)))
-        .curve(d3.curveCardinal.tension(0.5));
-
-    d3.select('#alterPath').datum(data)
-        .attr('stroke', 'green')
-        .attr('stroke-width', 2.5)
-        .attr('fill', 'none')
-        .transition().duration(2000)
-        .attr('d', line)
-}
-
-/**
  * 条形-折线图
  */
 const risingData = function (data) {
     const risingXScale = d3.scaleLinear()
         .domain(d3.extent([1959, 2023]))
         .range([0, innerWidth])
-
     const risingGdpYScale = d3.scaleLinear()
         .domain(d3.extent(data, risingYGdpValue))
         .range([innerHeight, 0])
         .nice()
-
     const risingGdpRisingYScale = d3.scaleLinear()
         .domain(d3.extent(data, risingYGdpRisingValue))
         .range([innerHeight, 0])
@@ -473,11 +422,8 @@ async function more_main() {
     /********/
     /* DRAW */
     /********/
-    moreData(popCountry)
     risingData(selectEco)
     ecoGrowData(ecoGrowInfoArr)
-
-    console.log(moreXValue(popData[0]))
 }
 
 more_main().then(() => console.log('done'))

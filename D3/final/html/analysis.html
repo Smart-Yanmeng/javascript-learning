@@ -11,11 +11,11 @@
 <body>
 <div class="body-container display-by-opacity">
     <div class="map">
-        <svg id="rising-data" class="border"></svg>
+        <svg id="analysis-data" class="border"></svg>
     </div>
     <div class="void border"></div>
     <div class="info">
-        <div id="more-title" class="up title1 border"></div>
+        <div id="analysis-title" class="up title1 border">Data Analysis</div>
 
         <!-- MID -->
         <div class="mid border">
@@ -26,12 +26,12 @@
                     <div class="data border">
                         <div class="data-select border">
                             <button id="data-select-btn" class="meet country-mask-out"
-                                    onclick="display_country_selection()">
+                                    onclick="display_data_selection()">
                                 选择数据
                             </button>
                         </div>
                         <div class="create-data border">
-                            <button class="meet" onclick="more_main()">生成数据</button>
+                            <button class="meet" onclick="analysis_main()">生成数据</button>
                         </div>
                         <div class="more border">
                             <button class="meet" onclick="to_more()">返回更多</button>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
 
-                <div id="country-mask" isFirst="true" class="border country-mask-out"></div>
+                <div id="factor-mask" isFirst="true" class="border factor-mask-out"></div>
 
                 <div class="summary border">
                     <div class="summary-word-title text-20-bold border">Top 5 GDP Growth year</div>
@@ -74,7 +74,7 @@
     </div>
 </div>
 
-<script src="./../js/more.js"></script>
+<script src="./../js/analysis.js"></script>
 <script src="./../js/common.js"></script>
 <script src="./../js/math-utils.js"></script>
 </body>

@@ -60,14 +60,16 @@ function doChangeYear() {
     }
 }
 
-/**
- * 动态改变国家
- */
 let selectCountry = 'China'
 
+/**
+ * 改变国家执行代码
+ */
 function doChangeCountry() {
+
     let countrySelector = document.getElementById('country-mask')
     console.log("country -> ", countrySelector)
+
     for (let country in window.worldList) {
         let div = document.createElement('div');
         div.textContent = window.worldList[country];
@@ -126,6 +128,7 @@ function display_year_selection() {
  * 显示国家选择框
  */
 function display_country_selection() {
+
     let mask = document.getElementById('country-mask')
     let isShow = mask.style.display === 'flex'
 
@@ -146,5 +149,74 @@ function display_country_selection() {
         mask.style.flexDirection = 'column'
         mask.offsetHeight;
         mask.style.opacity = '1'
+    }
+}
+
+/**
+ * 显示因素选择框
+ */
+function display_data_selection() {
+
+    let mask = document.getElementById('factor-mask')
+    let isShow = mask.style.display === 'flex'
+
+    // 判断是否第一次点击
+    if (mask.getAttribute('isFirst') === 'true') {
+        doSelectFactors()
+        mask.setAttribute('isFirst', 'false')
+    }
+
+    if (isShow) {
+        mask.style.transition = 'all 1s'
+        mask.style.opacity = '0'
+        setTimeout(() => {
+            mask.style.display = 'none'
+        }, 1000)
+    } else {
+        mask.style.transition = 'all 1s'
+        mask.style.display = 'flex'
+        mask.style.flexDirection = 'column'
+        mask.offsetHeight;
+        mask.style.opacity = '1'
+    }
+}
+
+/**
+ * 动态改变条件
+ */
+selectFactorBox = [false, false, false]
+
+function doSelectFactors() {
+
+    let selectListBox = ['population', 'terrorist', 'unemployment']
+    let factorSelector = document.getElementById('factor-mask')
+
+    for (let selection in selectListBox) {
+        let div = document.createElement('div');
+        div.setAttribute('isSelected', 'false')
+        div.textContent = selectListBox[selection];
+        div.classList.add('factor-option');
+        div.addEventListener('mouseover', function () {
+            this.style.transition = 'all 1s'
+            this.style.backgroundColor = '#e3007c'
+            this.style.color = '#ffffff'
+        })
+        div.addEventListener('mouseout', function () {
+            if (this.getAttribute('isSelected') === 'false') {
+                this.style.transition = 'all 1s'
+                this.style.backgroundColor = '#ffffff'
+                this.style.color = '#000000'
+            }
+        })
+        div.addEventListener('click', function () {
+
+            if (this.getAttribute('isSelected') === 'false') this.setAttribute('isSelected', 'true')
+            else this.setAttribute('isSelected', 'false')
+
+            // if (this.textContent === 'population') selectFactorBox[0] = !selectFactorBox[0]
+            // if (this.textContent === 'terrorist') selectFactorBox[1] = !selectFactorBox[1]
+            // if (this.textContent === 'unemployment') selectFactorBox[2] = !selectFactorBox[2]
+        });
+        factorSelector.appendChild(div);
     }
 }

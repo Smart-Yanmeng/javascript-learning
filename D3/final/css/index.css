@@ -184,6 +184,17 @@ body {
     overflow: scroll;
 }
 
+#factor-mask {
+    position: absolute;
+    display: none;
+    opacity: 0;
+    background-color: white;
+    left: 1150px;
+    top: 160px;
+    width: 200px;
+    height: 175px;
+}
+
 .year-option {
     width: 100%;
     height: 30px;
@@ -197,6 +208,15 @@ body {
     width: 100%;
     height: 30px;
     line-height: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: #000000;
+}
+
+.factor-option {
+    width: 100%;
+    height: 58px;
+    line-height: 58px;
     text-align: center;
     font-weight: bold;
     color: #000000;
