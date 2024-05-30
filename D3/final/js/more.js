@@ -194,7 +194,7 @@ const risingData = function (data) {
 
     // 添加标题
     {
-        document.getElementById('more-title').innerText = 'GDP and GDP growth in ' + selectCountry
+        document.getElementById('more-title').innerText = 'GDP and GDP growth in ' + localStorage.getItem('selectCountry')
 
         g.append('text')
             .attr('x', 0)
@@ -205,7 +205,7 @@ const risingData = function (data) {
         g.append('text')
             .attr('x', 0)
             .attr('y', -40)
-            .text('in ' + selectCountry)
+            .text('in ' + localStorage.getItem('selectCountry'))
             .attr('font-size', '1.2em')
 
         g.append('text')
@@ -338,7 +338,7 @@ async function more_main() {
 
     // 筛选出选择的国家的 GDP 总值数据
     let selectEco = economic
-        .filter(d => d['Country Name'] === selectCountry)
+        .filter(d => d['Country Name'] === localStorage.getItem('selectCountry'))
         .filter(d => d['GDP (current US$)_x'] !== '')
         .map(d => {
             return {
@@ -356,8 +356,8 @@ async function more_main() {
     if (!ecoGrowInfoArr[0]) {
         console.log('error!')
         alert('这个国家没有您想要的数据，即将回到中国！')
-        selectCountry = 'China'
-        document.getElementById('country-select-btn').textContent = selectCountry
+        localStorage.setItem('selectCountry', 'China')
+        document.getElementById('country-select-btn').textContent = localStorage.getItem('selectCountry')
         more_main().then(_ => {
             console.log('Flash to China !')
         })
@@ -381,7 +381,7 @@ async function more_main() {
 
     // 筛选出中国的人口大小数据
     let popCountry = popData
-        .filter(d => d['country'] === selectCountry)
+        .filter(d => d['country'] === localStorage.getItem('selectCountry'))
         .map(d => {
             return {
                 'year': d['year'],
@@ -412,11 +412,11 @@ async function more_main() {
         // let stdPopData = standardDeviation(popArr)
         // let medianPopData = median(popArr)
         //
-        // console.log("Max Population Data in " + selectCountry + " -> ", maxPopData)
-        // console.log("Min Population Data in " + selectCountry + " -> ", minPopData)
-        // console.log("Average Population Data in " + selectCountry + " -> ", avgPopData)
-        // console.log("Standard Deviation of Population Data in " + selectCountry + " -> ", stdPopData)
-        // console.log("Median Population Data in " + selectCountry + " -> ", medianPopData)
+        // console.log("Max Population Data in " + localStorage.getItem('selectCountry') + " -> ", maxPopData)
+        // console.log("Min Population Data in " + localStorage.getItem('selectCountry') + " -> ", minPopData)
+        // console.log("Average Population Data in " + localStorage.getItem('selectCountry') + " -> ", avgPopData)
+        // console.log("Standard Deviation of Population Data in " + localStorage.getItem('selectCountry') + " -> ", stdPopData)
+        // console.log("Median Population Data in " + localStorage.getItem('selectCountry') + " -> ", medianPopData)
     }
 
     /********/
@@ -426,4 +426,4 @@ async function more_main() {
     ecoGrowData(ecoGrowInfoArr)
 }
 
-more_main().then(() => console.log('done'))
+more_main().then(() => console.log(localStorage.getItem('selectCountry')))

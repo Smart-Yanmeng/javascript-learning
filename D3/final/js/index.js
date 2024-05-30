@@ -179,7 +179,9 @@ async function main() {
                 document.getElementById('select-gdp-data').innerText = 'You can select the rectangle to see the GDP data :)'
             })
             .on('click', function () {
-                console.log(worldDataMap[+this.id])
+                localStorage.setItem('selectCountry', worldDataMap[+this.id])
+
+                to_analysis()
             })
             .append('title')
             .text(d => {
@@ -369,4 +371,4 @@ async function main() {
 }
 
 // Main 函数
-main().then(_ => console.log('done'));
+main().then(_ => console.log(localStorage.getItem('selectCountry')));

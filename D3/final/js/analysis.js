@@ -46,9 +46,9 @@ function analysisInit() {
 /**
  * 折线图
  */
-const analysisData = function (data) {
+const analysisData = function (selectedPath) {
     const analysisXScale = d3.scaleLinear()
-        .domain(d3.extent(data, analysisXValue))
+        .domain([1960, 2023])
         .range([0, innerWidth])
         .nice()
 
@@ -77,45 +77,52 @@ const analysisData = function (data) {
     // 画折线图
     {
         g.append('path')
-            .attr('id', 'alterPath')
+            .attr('id', 'alterPath' + selectedPath)
 
         const line1 = d3.line()
             .x(d => analysisXScale(analysisXValue(d)))
             .y(d => analysisYScale(analysisPopYValue(d)))
             .curve(d3.curveCardinal.tension(0.5));
-
         const line2 = d3.line()
             .x(d => analysisXScale(analysisXValue(d)))
             .y(d => analysisYScale(analysisTerrorYValue(d)))
             .curve(d3.curveCardinal.tension(0.5));
-
         const line3 = d3.line()
             .x(d => analysisXScale(analysisXValue(d)))
             .y(d => analysisYScale(analysisUnemploymentRateYValue(d)))
             .curve(d3.curveCardinal.tension(0.5));
-
         const line4 = d3.line()
             .x(d => analysisXScale(analysisXValue(d)))
             .y(d => analysisYScale(analysisEcoYValue(d)))
             .curve(d3.curveCardinal.tension(0.5));
 
         selectFactorBox.forEach((d, i) => {
-            console.log(d, i)
             if (d && i === 0) {
-                console.log(window.selectList[0])
-                d3.select('#alterPath').datum(window.selectList[0])
-                    .attr('stroke', 'red')
+                d3.select('#alterPathA').datum(window.selectList["select1"])
+                    .attr('stroke', '#CD5C5C')
                     .attr('stroke-width', 2.5)
                     .attr('fill', 'none')
-                    // .transition().duration(2000)
                     .attr('d', line1)
             }
+            if (d && i === 1) {
+                d3.select('#alterPathB').datum(window.selectList["select2"])
+                    .attr('stroke', '#9ACD32')
+                    .attr('stroke-width', 2.5)
+                    .attr('fill', 'none')
+                    .attr('d', line2)
+            }
+            if (d && i === 2) {
+                d3.select('#alterPathC').datum(window.selectList["select3"])
+                    .attr('stroke', '#4682B4')
+                    .attr('stroke-width', 2.5)
+                    .attr('fill', 'none')
+                    .attr('d', line3)
+            }
         })
-        d3.select('#alterPath').datum(data)
-            .attr('stroke', 'green')
+        d3.select('#alterPathD').datum(selectList['mustData'])
+            .attr('stroke', '#D2B48C')
             .attr('stroke-width', 2.5)
             .attr('fill', 'none')
-            // .transition().duration(2000)
             .attr('d', line4)
     }
 
@@ -130,7 +137,7 @@ const analysisData = function (data) {
         g.append('text')
             .attr('x', 0)
             .attr('y', -40)
-            .text('in ' + selectCountry)
+            .text('in ' + localStorage.getItem('selectCountry'))
             .attr('font-size', '1.2em')
 
         g.append('text')
@@ -148,13 +155,66 @@ const analysisData = function (data) {
             .attr('transform', 'rotate(-90)')
             .attr('text-anchor', 'middle')
     }
+
+    // 添加图例
+    {
+        g.append('rect')
+            .attr('x', innerWidth - 250)
+            .attr('y', -80)
+            .attr('width', 120)
+            .attr('height', 5)
+            .attr('fill', '#D2B48C')
+            .attr('opacity', '0.7')
+        g.append('rect')
+            .attr('x', innerWidth - 250)
+            .attr('y', -40)
+            .attr('width', 120)
+            .attr('height', 5)
+            .attr('fill', '#CD5C5C')
+            .attr('opacity', '0.7')
+        g.append('rect')
+            .attr('x', innerWidth - 100)
+            .attr('y', -80)
+            .attr('width', 120)
+            .attr('height', 5)
+            .attr('fill', '#9ACD32')
+            .attr('opacity', '0.7')
+        g.append('rect')
+            .attr('x', innerWidth - 100)
+            .attr('y', -40)
+            .attr('width', 120)
+            .attr('height', 5)
+            .attr('fill', '#4682B4')
+            .attr('opacity', '0.7')
+
+        g.append('text')
+            .attr('x', innerWidth - 250)
+            .attr('y', -87)
+            .text('GDP')
+            .attr('font-size', '1em')
+        g.append('text')
+            .attr('x', innerWidth - 250)
+            .attr('y', -47)
+            .text('Population')
+            .attr('font-size', '1em')
+        g.append('text')
+            .attr('x', innerWidth - 100)
+            .attr('y', -87)
+            .text('Terrorist')
+            .attr('font-size', '1em')
+        g.append('text')
+            .attr('x', innerWidth - 100)
+            .attr('y', -47)
+            .text('Unemployment')
+            .attr('font-size', '1em')
+    }
 }
 
 /**
- * 图例
+ * 文字部分标题
  */
 {
-    document.getElementById('analysis-title').innerText = 'Data Analysis in '
+    document.getElementById('analysis-title').innerText = 'Data Analysis in ' + localStorage.getItem('selectCountry')
 }
 
 // 绘制条形统计图
@@ -234,6 +294,7 @@ const analysisData = function (data) {
  * 程序主函数
  */
 async function analysis_main() {
+
     // 读入数据
     const countryCode = await d3.json("./../data/world-110m-country-codes.json")
     const terrorism = await d3.csv("./../data/world-terrorist-data.csv")
@@ -244,7 +305,7 @@ async function analysis_main() {
     // console.log('terrorism -> ', terrorism)
     // console.log('unemployment -> ', unemployment)
     // console.log('population -> ', population)
-    console.log('economic -> ', economic)
+    // console.log('economic -> ', economic)
 
     // ID -> NAME
     let worldDataMap = {};
@@ -277,7 +338,7 @@ async function analysis_main() {
     // 添加 unemployment rates
     const years = ['2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
     let unemploymentRateData = {};
-    const unemploymentData = unemployment.filter(d => d['country_name'] === selectCountry)
+    const unemploymentData = unemployment.filter(d => d['country_name'] === localStorage.getItem('selectCountry'))
     years.forEach(year => {
 
         let totalUnemployment = 0;
@@ -286,13 +347,11 @@ async function analysis_main() {
         unemploymentRateData[year] = {
             year: +year,
             unemploymentRate: totalUnemployment,
-            country: selectCountry
+            country: localStorage.getItem('selectCountry')
         };
     });
     unemploymentRateData = Object.values(unemploymentRateData);
     // console.log("unemploymentData -> ", unemploymentRateData)
-
-    // console.log("population -> ", population)
 
     // 全局世界列表
     window.worldList = Object.entries(worldDataMap).map(([_, value]) => value);
@@ -302,7 +361,7 @@ async function analysis_main() {
 
     // 筛选出选择的国家的 GDP 总值数据
     let ecoData = economic
-        .filter(d => d['Country Name'] === selectCountry)
+        .filter(d => d['Country Name'] === localStorage.getItem('selectCountry'))
         .filter(d => d['GDP (current US$)_x'] !== '')
         .map(d => {
             return {
@@ -315,11 +374,11 @@ async function analysis_main() {
         })
         .filter(d => !isNaN(d['id']))
     let ecoGrowInfoArr = ecoData.map(d => ([d['year'], d['growth']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
-    console.log("ecoData -> ", ecoData)
+    // console.log("ecoData -> ", ecoData)
 
     // 筛选出人口大小数据
     let popCountry = popData
-        .filter(d => d['country'] === selectCountry)
+        .filter(d => d['country'] === localStorage.getItem('selectCountry'))
         .map(d => {
             return {
                 'year': d['year'],
@@ -329,11 +388,11 @@ async function analysis_main() {
             }
         })
         .filter(d => !isNaN(d['id']))
-    console.log("Population Data -> ", popCountry)
+    // console.log("Population Data -> ", popCountry)
 
     // 筛选出恐袭死亡人口数据
     let terrorCountry = terrorData
-        .filter(d => d['country'] === selectCountry)
+        .filter(d => d['country'] === localStorage.getItem('selectCountry'))
         .map(d => {
             return {
                 'year': d['year'],
@@ -347,7 +406,7 @@ async function analysis_main() {
 
     // 筛选出失业率数据
     let unemploymentRateCountry = unemploymentRateData
-        .filter(d => d['country'] === selectCountry)
+        .filter(d => d['country'] === localStorage.getItem('selectCountry'))
         .map(d => {
             return {
                 'year': d['year'],
@@ -360,21 +419,23 @@ async function analysis_main() {
     // console.log("unemploymentRateCountry Data -> ", unemploymentRateCountry)
 
     // 显示在页面上
-    {
-        document.getElementById('summary-gdp-growth').innerHTML = `
-            <p>${ecoGrowInfoArr[0][0]}: ${ecoGrowInfoArr[0][1]}</p>
-            <p>${ecoGrowInfoArr[1][0]}: ${ecoGrowInfoArr[1][1]}</p>
-            <p>${ecoGrowInfoArr[2][0]}: ${ecoGrowInfoArr[2][1]}</p>
-            <p>${ecoGrowInfoArr[3][0]}: ${ecoGrowInfoArr[3][1]}</p>
-            <p>${ecoGrowInfoArr[4][0]}: ${ecoGrowInfoArr[4][1]}</p>
-        `
-    }
+    // {
+    //     document.getElementById('summary-gdp-growth').innerHTML = `
+    //         <p>${ecoGrowInfoArr[0][0]}: ${ecoGrowInfoArr[0][1]}</p>
+    //         <p>${ecoGrowInfoArr[1][0]}: ${ecoGrowInfoArr[1][1]}</p>
+    //         <p>${ecoGrowInfoArr[2][0]}: ${ecoGrowInfoArr[2][1]}</p>
+    //         <p>${ecoGrowInfoArr[3][0]}: ${ecoGrowInfoArr[3][1]}</p>
+    //         <p>${ecoGrowInfoArr[4][0]}: ${ecoGrowInfoArr[4][1]}</p>
+    //     `
+    // }
 
+    // 最终需要的数据格式
     let popArr = popCountry.map(d => d['population'])
     let terrorArr = terrorCountry.map(d => d['deaths'])
     let unemploymentRateArr = unemploymentRateCountry.map(d => d['unemploymentRate'])
     let ecoDataArr = ecoData.map(d => d['gdp'])
 
+    // 确定一些中间值
     maxPopData = maxValue(popArr)
     minPopData = minValue(popArr)
     maxTerrorData = maxValue(terrorArr)
@@ -393,10 +454,10 @@ async function analysis_main() {
         select3: unemploymentRateCountry,
         mustData: ecoData
     }
-    analysisData(selectList.mustData)
-    if (selectFactorBox[0]) analysisData(selectList.select1)
-    if (selectFactorBox[1]) analysisData(selectList.select2)
-    if (selectFactorBox[2]) analysisData(selectList.select3)
+    analysisData('D')
+    if (selectFactorBox[0]) analysisData('A')
+    if (selectFactorBox[1]) analysisData('B')
+    if (selectFactorBox[2]) analysisData('C')
 }
 
-analysis_main().then(() => console.log('done'))
+analysis_main('china').then(() => console.log(localStorage.getItem('selectCountry')))

@@ -16,6 +16,7 @@ function to_analysis() {
  * 跳转到 Map 页面
  */
 function to_map() {
+    localStorage.setItem('selectCountry', 'China')
     window.open('./../html/index.html', '_self');
 }
 
@@ -60,8 +61,6 @@ function doChangeYear() {
     }
 }
 
-let selectCountry = 'China'
-
 /**
  * 改变国家执行代码
  */
@@ -85,10 +84,10 @@ function doChangeCountry() {
             this.style.color = '#000000'
         })
         div.addEventListener('click', function () {
-            selectCountry = this.textContent;
+            localStorage.setItem('selectCountry', this.textContent);
 
             let countrySelectBtn = document.getElementById('country-select-btn')
-            countrySelectBtn.textContent = selectCountry
+            countrySelectBtn.textContent = localStorage.getItem('selectCountry')
 
             display_country_selection()
         });
@@ -213,9 +212,9 @@ function doSelectFactors() {
             if (this.getAttribute('isSelected') === 'false') this.setAttribute('isSelected', 'true')
             else this.setAttribute('isSelected', 'false')
 
-            // if (this.textContent === 'population') selectFactorBox[0] = !selectFactorBox[0]
-            // if (this.textContent === 'terrorist') selectFactorBox[1] = !selectFactorBox[1]
-            // if (this.textContent === 'unemployment') selectFactorBox[2] = !selectFactorBox[2]
+            if (this.textContent === 'population') selectFactorBox[0] = !selectFactorBox[0]
+            if (this.textContent === 'terrorist') selectFactorBox[1] = !selectFactorBox[1]
+            if (this.textContent === 'unemployment') selectFactorBox[2] = !selectFactorBox[2]
         });
         factorSelector.appendChild(div);
     }
