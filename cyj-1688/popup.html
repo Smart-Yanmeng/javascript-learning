@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel to Web Modifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      width: 250px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .file-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .file-label {
+      font-weight: bold;
+      color: #555;
+    }
+
+    .file-input {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button#start {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button#start:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    button#start:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    button#ready {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button#ready:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    button#ready:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    pre#output {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+  <script src="popup.js" defer></script>
+  <script src="libs/xlsx.full.min.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Excel to Web Modifier</h2>
+    <div class="file-inputs">
+
+      <label for="fileInput1" class="file-label">输入上链接号:</label>
+      <input type="text" id="textinput">
+
+      <label for="fileInput1" class="file-label">选择电子版样品册excel文件:</label>
+      <input type="file" id="fileInput1" class="file-input" />
+
+      <label for="fileInput2" class="file-label">选择专用仓库帐excel文件:</label>
+      <input type="file" id="fileInput2" class="file-input" />
+      
+      <label for="fileInput3" class="file-label">选择第一个excel转成的json文件:</label>
+      <input type="file" id="fileInput3" class="file-input" />
+      
+      <label for="fileInput4" class="file-label">选择第二个excel转成的json文件:</label>
+      <input type="file" id="fileInput4" class="file-input" />
+    </div>
+    <button id="ready">Ready</button>
+    <button id="start" disabled>Start</button>
+  </div>
+</body>
+</html>

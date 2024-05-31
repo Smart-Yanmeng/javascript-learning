@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Control Webpage Example",
+  "version": "1.0",
+  "description": "An example extension to control the current webpage.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "windows"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["libs/xlsx.full.min.js","libs/jsonData1.json","libs/jsonData2.json"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
