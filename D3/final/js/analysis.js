@@ -8,7 +8,7 @@ let maxTerrorData, minTerrorData
 let maxUnemploymentRateData, minUnemploymentRateData
 let maxEcoData, minEcoData
 
-// MORE SVG
+// ANALYSIS SVG
 let analysisSvg = d3.select('#analysis-data')
     .attr('width', size.width)
     .attr('height', size.height)
@@ -37,6 +37,11 @@ const analysisEcoYValue = (datum) => {
  * 初始化 SVG 图片，防止 append 多次叠加
  */
 function analysisInit() {
+    document.getElementById('select-country').innerText = '已选中国家：' + localStorage.getItem('selectCountry')
+    document.getElementById('is-selected-terrorist').innerText = '未选中恐袭数据'
+    document.getElementById('is-selected-population').innerText = '未选中人口数据'
+    document.getElementById('is-selected-unemployment').innerText = '未选中失业率数据'
+
     analysisSvg.selectAll('g').remove();
     analysisSvg.selectAll('rect').remove();
     analysisSvg.selectAll('text').remove();
@@ -47,6 +52,7 @@ function analysisInit() {
  * 折线图
  */
 const analysisData = function (selectedPath) {
+
     const analysisXScale = d3.scaleLinear()
         .domain([1960, 2023])
         .range([0, innerWidth])
@@ -373,7 +379,7 @@ async function analysis_main() {
             }
         })
         .filter(d => !isNaN(d['id']))
-    let ecoGrowInfoArr = ecoData.map(d => ([d['year'], d['growth']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
+    // let ecoGrowInfoArr = ecoData.map(d => ([d['year'], d['growth']])).sort((a, b) => b[1] - a[1]).slice(0, 5)
     // console.log("ecoData -> ", ecoData)
 
     // 筛选出人口大小数据
@@ -402,7 +408,7 @@ async function analysis_main() {
             }
         })
         .filter(d => !isNaN(d['id']))
-    // console.log("TerrorDeath Data -> ", terrorCountry)
+    console.log("TerrorDeath Data -> ", terrorCountry)
 
     // 筛选出失业率数据
     let unemploymentRateCountry = unemploymentRateData
@@ -436,14 +442,16 @@ async function analysis_main() {
     let ecoDataArr = ecoData.map(d => d['gdp'])
 
     // 确定一些中间值
-    maxPopData = maxValue(popArr)
-    minPopData = minValue(popArr)
-    maxTerrorData = maxValue(terrorArr)
-    minTerrorData = minValue(terrorArr)
-    maxUnemploymentRateData = maxValue(unemploymentRateArr)
-    minUnemploymentRateData = minValue(unemploymentRateArr)
-    maxEcoData = maxValue(ecoDataArr)
-    minEcoData = minValue(ecoDataArr)
+    {
+        maxPopData = maxValue(popArr)
+        minPopData = minValue(popArr)
+        maxTerrorData = maxValue(terrorArr)
+        minTerrorData = minValue(terrorArr)
+        maxUnemploymentRateData = maxValue(unemploymentRateArr)
+        minUnemploymentRateData = minValue(unemploymentRateArr)
+        maxEcoData = maxValue(ecoDataArr)
+        minEcoData = minValue(ecoDataArr)
+    }
 
     /********/
     /* DRAW */
@@ -455,9 +463,18 @@ async function analysis_main() {
         mustData: ecoData
     }
     analysisData('D')
-    if (selectFactorBox[0]) analysisData('A')
-    if (selectFactorBox[1]) analysisData('B')
-    if (selectFactorBox[2]) analysisData('C')
+    if (selectFactorBox[0]) {
+        analysisData('A')
+        document.getElementById('is-selected-terrorist').innerText = '已选中恐袭数据'
+    } else document.getElementById('is-selected-terrorist').innerText = '未选中恐袭数据'
+    if (selectFactorBox[1]) {
+        analysisData('B')
+        document.getElementById('is-selected-population').innerText = '已选中人口数据'
+    } else document.getElementById('is-selected-population').innerText = '未选中人口数据'
+    if (selectFactorBox[2]) {
+        analysisData('C')
+        document.getElementById('is-selected-unemployment').innerText = '已选中失业率数据'
+    } else document.getElementById('is-selected-unemployment').innerText = '未选中失业率数据'
 }
 
 analysis_main('china').then(() => console.log(localStorage.getItem('selectCountry')))

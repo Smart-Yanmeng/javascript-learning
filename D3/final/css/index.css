@@ -134,12 +134,32 @@ body {
     justify-content: space-between;
 }
 
+.info .analysis-mid {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .info .mid .mid-top {
     width: 900px;
     height: 180px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.info .mid .mid-button {
+    width: 900px;
+    height: 180px;
+}
+
+.info .mid .mid-button .data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 180px;
+    margin-right: 200px;
 }
 
 /**************/
@@ -150,6 +170,13 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.info .mid .left .index-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: auto;
 }
 
 .info .mid .left .data {
@@ -189,8 +216,8 @@ body {
     display: none;
     opacity: 0;
     background-color: white;
-    left: 1150px;
-    top: 160px;
+    left: 1400px;
+    top: 183px;
     width: 200px;
     height: 175px;
 }
@@ -269,8 +296,19 @@ body {
     font-weight: bold;
 }
 
-.info .mid .summary .summary-svg {
-    height: 390px;
+.info .mid .summary .summary-box {
+    height: 290px;
+
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.info .mid .summary .summary-box .small-title {
+    height: 50px;
+    line-height: 50px;
+    font-weight: bold;
+    font-size: 25px;
 }
 
 .info .mid .mid-down #select-gdp-data {

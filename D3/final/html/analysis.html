@@ -18,52 +18,39 @@
         <div id="analysis-title" class="up title1 border">Data Analysis</div>
 
         <!-- MID -->
-        <div class="mid border">
+        <div class="analysis-mid mid border">
             <!-- MID-TOP -->
             <div class="border-pink"></div>
-            <div class="mid-top">
-                <div class="left border">
-                    <div class="data border">
-                        <div class="data-select border">
-                            <button id="data-select-btn" class="meet country-mask-out"
-                                    onclick="display_data_selection()">
-                                选择数据
-                            </button>
-                        </div>
-                        <div class="create-data border">
-                            <button class="meet" onclick="analysis_main()">生成数据</button>
-                        </div>
-                        <div class="more border">
-                            <button class="meet" onclick="to_more()">返回更多</button>
-                        </div>
-                        <div class="more border">
-                            <button class="meet" onclick="to_map()">返回地图</button>
-                        </div>
+            <div class="mid-button">
+                <div class="data border">
+                    <div class="data-select border">
+                        <button id="data-select-btn" class="meet country-mask-out"
+                                onclick="display_data_selection()">
+                            选择数据
+                        </button>
+                    </div>
+                    <div class="create-data border">
+                        <button class="meet" onclick="analysis_main()">生成数据</button>
+                    </div>
+                    <div class="more border">
+                        <button class="meet" onclick="to_more()">返回更多</button>
+                    </div>
+                    <div class="more border">
+                        <button class="meet" onclick="to_map()">返回地图</button>
                     </div>
                 </div>
 
                 <div id="factor-mask" isFirst="true" class="border factor-mask-out"></div>
-
-                <div class="summary border">
-                    <div class="summary-word-title text-20-bold border">Top 5 GDP Growth year</div>
-                    <div id="summary-gdp-growth" class="border"></div>
-                </div>
             </div>
             <div class="border-pink"></div>
 
             <!-- MID-MID -->
             <div class="summary border">
-                <!--                <div class="summary border">统计框</div>-->
-                <div class="summary-svg border">
-                    <svg class="pop-svg" width="900" height="390"></svg>
-                </div>
-            </div>
-            <div class="border-pink"></div>
-
-            <!-- MID-DOWN -->
-            <div class="mid-down inline-80">
-                <div id="select-gdp-growth-data" class="text-30-bold border">You can select the rectangle to see the
-                    GDP data :)
+                <div class="summary-box border">
+                    <div id="select-country" class="small-title">awa</div>
+                    <div id="is-selected-terrorist" class="small-title"></div>
+                    <div id="is-selected-population" class="small-title"></div>
+                    <div id="is-selected-unemployment" class="small-title"></div>
                 </div>
             </div>
             <div class="border-pink"></div>
