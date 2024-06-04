@@ -151,7 +151,7 @@ async function main() {
             .attr('d', geoPath)
             .attr('id', d => +d.id)
             .attr('stroke', 'black')
-            .attr('stroke-width', 0.7)
+            .attr('stroke-width', 0.5)
             .attr('fill', function (d) {
                 let id = +d['id']
 
